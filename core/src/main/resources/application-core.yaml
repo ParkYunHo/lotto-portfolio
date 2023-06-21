@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: default
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    generate-ddl: true
+  datasource:
+    hikari:
+      connection-timeout: 5000
+      minimum-idle: 10
+      maximum-pool-size: 100
+
+hibernate:
+  show_sql: false
+  format_sql: false
+  physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+# Vault AppRole
+vault:
+  uri: http://localhost:8200
+  token:
+  app-role:
+    role-id: acd0e273-3e23-45bc-b168-5d619d81f450
+    secret-id: a7fc4000-2094-0980-2790-46b9f05ec72d
+  secret:
+    appconfig: oauth2-app/local

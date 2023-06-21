@@ -100,8 +100,8 @@ project(":core") {
     val jar: Jar by tasks
     val bootJar: BootJar by tasks
 
-    bootJar.enabled = true
-    jar.enabled = false
+    bootJar.enabled = false
+    jar.enabled = true
 }
 
 
