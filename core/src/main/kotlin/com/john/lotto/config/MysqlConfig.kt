@@ -1,4 +1,4 @@
-package com.john.core.config
+package com.john.lotto.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.jdbc.support.JdbcTransactionManager
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect
@@ -24,7 +25,7 @@ import javax.sql.DataSource
 @EnableJpaRepositories(
     entityManagerFactoryRef = "lottoEntityManagerFactory",
     transactionManagerRef = "lottoTransactionManager",
-    basePackages = ["com.john.core"]
+    basePackages = ["com.john.lotto"]
 )
 class MysqlConfig(
     private val env: Environment
@@ -50,7 +51,7 @@ class MysqlConfig(
             dataSource = lottoDataSource()
             jpaVendorAdapter = HibernateJpaVendorAdapter()
             jpaDialect = HibernateJpaDialect()
-            setPackagesToScan("com.john.core")
+            setPackagesToScan("com.john.lotto.entity")
             setJpaPropertyMap(
                 mapOf(
                     "hibernate.physical_naming_strategy" to env.getProperty("hibernate.physical_naming_strategy"),
@@ -63,4 +64,8 @@ class MysqlConfig(
     @Bean
     fun lottoTransactionManager(): JpaTransactionManager =
         JpaTransactionManager().apply { entityManagerFactory = lottoEntityManagerFactory().`object` }
+
+//    @Bean
+//    fun lottoJdbcTransactionManager(): JdbcTransactionManager =
+//        JdbcTransactionManager(lottoDataSource())
 }

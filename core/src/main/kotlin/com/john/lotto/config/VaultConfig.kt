@@ -1,4 +1,4 @@
-package com.john.core.config
+package com.john.lotto.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary

@@ -1,4 +1,4 @@
-package com.john.api
+package com.john.lotto
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

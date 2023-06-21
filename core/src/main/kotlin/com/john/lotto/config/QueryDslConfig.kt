@@ -1,4 +1,4 @@
-package com.john.core.config
+package com.john.lotto.config
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager

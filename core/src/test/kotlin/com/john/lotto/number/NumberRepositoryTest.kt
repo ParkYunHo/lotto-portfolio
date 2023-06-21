@@ -1,20 +1,22 @@
-package com.john.core.number
+package com.john.lotto.number
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Assertions.*
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import javax.sql.DataSource
 
 /**
  * @author yoonho
- * @since 2023.06.21
+ * @since 2023.06.22
  */
 @SpringBootTest("CoreApplicationTests")
 @ActiveProfiles("core-test")
 class NumberRepositoryTest(
-    private val numberRepository: NumberRepository
+    private val numberRepository: NumberRepository,
 ): BehaviorSpec({
     val log = LoggerFactory.getLogger(this::class.java)
 

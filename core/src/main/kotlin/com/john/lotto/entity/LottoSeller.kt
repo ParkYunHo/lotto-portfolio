@@ -1,4 +1,4 @@
-package com.john.core.entity
+package com.john.lotto.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

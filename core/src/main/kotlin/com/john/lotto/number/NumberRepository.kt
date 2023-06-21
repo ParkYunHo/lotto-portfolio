@@ -1,8 +1,8 @@
-package com.john.core.number
+package com.john.lotto.number
 
-import com.john.core.entity.QLottoNumber
-import com.john.core.number.dto.LottoNumberDto
-import com.john.core.number.dto.QLottoNumberDto
+import com.john.lotto.entity.QLottoNumber
+import com.john.lotto.number.dto.LottoNumberDto
+import com.john.lotto.number.dto.QLottoNumberDto
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Repository

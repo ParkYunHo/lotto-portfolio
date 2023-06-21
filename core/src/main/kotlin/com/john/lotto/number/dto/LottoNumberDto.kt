@@ -1,4 +1,4 @@
-package com.john.core.number.dto
+package com.john.lotto.number.dto
 
 import com.querydsl.core.annotations.QueryProjection
 
