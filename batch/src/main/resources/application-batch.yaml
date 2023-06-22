@@ -2,7 +2,7 @@ spring:
   batch:
     job:
       enabled: true
-      name: ${job.name:lottoNumberJob}
+      name: ${job.name}
   config:
     activate:
       on-profile: default
