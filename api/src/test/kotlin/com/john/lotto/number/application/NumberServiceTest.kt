@@ -1,23 +1,17 @@
-package com.john.lotto.number
+package com.john.lotto.number.application
 
-import com.john.lotto.CoreApplicationTests
+import com.john.lotto.ApiApplicationTests
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Assertions.*
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import javax.sql.DataSource
 
-/**
- * @author yoonho
- * @since 2023.06.22
- */
-@SpringBootTest(classes = [CoreApplicationTests::class])
-@ActiveProfiles("core-test")
-class NumberRepositoryTest(
-    private val numberRepository: NumberRepository,
+@SpringBootTest(classes = [ApiApplicationTests::class])
+@ActiveProfiles("api-test")
+class NumberServiceTest(
+    private val numberService: NumberService
 ): BehaviorSpec({
     val log = LoggerFactory.getLogger(this::class.java)
 
@@ -25,7 +19,7 @@ class NumberRepositoryTest(
         val drwtNo = 1072L
 
         When("만약, 특정 로또번호 조회를 요청하면") {
-            val result = numberRepository.findLottoNumber(drwtNo = drwtNo)
+            val result = numberService.findLottoNumber(drwtNo = drwtNo).block()
 
             Then("그러면, 특정 로또번호 조회 결과를 확인한다.") {
                 log.info(" >>> [findLottoNumber] result: $result")
@@ -33,5 +27,4 @@ class NumberRepositoryTest(
             }
         }
     }
-
 })
