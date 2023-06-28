@@ -1,0 +1,40 @@
+#name: cd
+#
+#on:
+#  push:
+#    paths:
+#      - 'api/**'
+#      - 'batch/**'
+#    tags:
+#      - 'v**'
+#
+#jobs:
+#  cd:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: git checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Set Path Filter (api, batch)
+#        uses: dorny/paths-filter@v2.11.1
+#        id: changes
+#        with:
+#          filters: |
+#            api:
+#              - 'api/**'
+#            batch:
+#              - 'batch/**'
+#
+#      - name: Execute Remote SSH & Deploy 'API' module
+#        if: steps.changes.outputs.back == 'true'
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.REMOTE_SSH_HOST }}
+#          username: ${{ secrets.REMOTE_SSH_USERNAME }}
+#          key: ${{ secrets.REMOTE_SSH_KEY }}
+#          script: |
+#            whoami
+#            docker pull johnpark0921/lotto-portfolio:$GITHUB_REF_NAME
+#            docker container run --name lotto-portfolio -p 8080:8080 johnpark0921/lotto-portfolio:$GITHUB_REF_NAME
+#
+#      # TODO: batch deploy문도 작성 필요 (crontab 설정 넣기)
