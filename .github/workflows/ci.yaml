@@ -2,9 +2,6 @@ name: ci
 
 on:
   push:
-#    paths:
-#      - 'api/**'
-#      - 'batch/**'
     tags:
       - 'v**'
 
@@ -32,73 +29,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-#      - name: Set Path Filter (api, batch)
-#        uses: dorny/paths-filter@v2.11.1
-#        id: changes
-#        with:
-#          filters: |
-#            api:
-#              - 'api/**'
-#            batch:
-#              - 'batch/**'
-
-      # API build&deploy
       - name: Build Gradle with JIB (API)
-#        if: steps.changes.outputs.api == 'true'
         run: ./gradlew clean --stacktrace -PtagName=$GITHUB_REF_NAME --build-file=./api/build.gradle.kts -Djib.console=plain -Djib.useOnlyProjectCache=true jib
 
       - name: Execute Remote SSH & Deploy 'API' module
-#        if: steps.changes.outputs.api == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_SSH_HOST }}
           username: ${{ secrets.REMOTE_SSH_USERNAME }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
-          #          passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
-          #          port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             whoami    
             docker pull johnpark0921/lotto-portfolio:$GITHUB_REF_NAME
             docker container run --name lotto-portfolio -p 8080:8080 johnpark0921/lotto-portfolio:$GITHUB_REF_NAME
-    
-
-
-
-
-
-
-
-
-
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Git Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Setup JDK
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 17
-#
-#      - name: Grant execute permission for gradlew
-#        run: chmod +x gradlew
-#
-#      - name: Dockerhub Login
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Build Gradle with JIB
-#        run: ./gradlew clean --stacktrace -PtagName=$GITHUB_REF_NAME --build-file=./api/build.gradle.kts -Djib.console=plain -Djib.useOnlyProjectCache=true jib
-#
-#      - name: execute remote ssh
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.REMOTE_SSH_HOST }}
-#          username: ${{ secrets.REMOTE_SSH_USERNAME }}
-#          key: ${{ secrets.REMOTE_SSH_KEY }}
-##          passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
-##          port: ${{ secrets.REMOTE_SSH_PORT }}
-#          script: |
-#            whoami
