@@ -39,6 +39,5 @@ jobs:
           username: ${{ secrets.REMOTE_SSH_USERNAME }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           script: |
-            whoami    
             docker pull johnpark0921/lotto-portfolio
             docker container run --name lotto-portfolio -p 8080:8080 johnpark0921/lotto-portfolio

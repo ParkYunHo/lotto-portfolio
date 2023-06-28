@@ -26,4 +26,4 @@ vault:
     role-id:
     secret-id:
   secret:
-    appconfig: oauth2-app/local
+    appconfig: lotto-app/local

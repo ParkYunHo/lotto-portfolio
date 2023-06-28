@@ -11,8 +11,8 @@ import org.hibernate.annotations.Comment
  * @since 2023.06.21
  */
 @Entity
-@Table(catalog = "LOTTO", name = "LOTTO_SELLER_TB")
-class LottoSeller(
+@Table(catalog = "LOTTO", name = "LOTTO_STORE_TB")
+class LottoStore(
     @Id
     @Column(name = "LATITUDE", nullable = false)
     @Comment("판매점 위도")

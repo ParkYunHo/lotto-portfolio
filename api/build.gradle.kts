@@ -21,7 +21,7 @@ dependencies {
 }
 
 // JIB 설정
-val tagName = project.properties["tagName"]
+val tagName = project.properties["tagName"] ?: ""
 val regex = Regex("^v")
 
 jib {
