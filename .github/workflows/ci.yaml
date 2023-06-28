@@ -31,3 +31,14 @@ jobs:
 
       - name: Build Gradle with JIB
         run: ./gradlew clean --stacktrace -PtagName=$GITHUB_REF_NAME --build-file=./api/build.gradle.kts -Djib.console=plain -Djib.useOnlyProjectCache=true jib
+
+      - name: execute remote ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_SSH_HOST }}
+          username: ${{ secrets.REMOTE_SSH_USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+#          passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
+#          port: ${{ secrets.REMOTE_SSH_PORT }}
+          script: |
+            whoami
