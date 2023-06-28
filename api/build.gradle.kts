@@ -30,9 +30,9 @@ jib {
     }
     to {
         image = "johnpark0921/lotto-portfolio:$tagName"
-//        if(regex.containsMatchIn(tagName as String)) {
-//            tags = setOf("latest")
-//        }
+        if(regex.containsMatchIn(tagName as String)) {
+            tags = setOf("latest")
+        }
     }
     container {
         labels.set(
