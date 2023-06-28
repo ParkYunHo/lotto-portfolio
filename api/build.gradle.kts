@@ -19,3 +19,37 @@ dependencies {
 
     testImplementation("io.projectreactor:reactor-test")
 }
+
+// JIB 설정
+val tagName = project.properties["tagName"]
+val regex = Regex("^v")
+
+jib {
+    from {
+        image = "eclipse-temurin:17"
+    }
+    to {
+        image = "johnpark0921/lotto-portfolio:$tagName"
+//        if(regex.containsMatchIn(tagName as String)) {
+//            tags = setOf("latest")
+//        }
+    }
+    container {
+        labels.set(
+            mapOf(
+                "maintainer" to "yoonho <qkrdbsgh0921@gmail.com>"
+            )
+        )
+        creationTime.set("USE_CURRENT_TIMESTAMP")
+        setFormat("OCI")
+        environment = mapOf(
+            "TZ" to "Asia/Seoul"
+        )
+        jvmFlags = listOf(
+            "-Dsun.net.inetaddr.ttl=0",     // DNS cache TTL
+            "-XX:+PrintCommandLineFlags",   // Print JVM Flags
+        )
+    }
+}
+
+

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - 'v**'
+
+# TODO:
+#   - gitaction에서 SSH 방식으로 인스턴스 접근해서 image pull & docker run 해보기 - https://doooodle932.tistory.com/163
+#   - 수동으로 gitaction 돌릴 수 있도록 설정, if문 설정하면 될듯 (api, batch 별도 배포를 위해) - https://velog.io/@gidskql6671/Github-Actions-Job%EB%93%A4%EC%9D%98-%EC%8B%A4%ED%96%89-%EC%88%9C%EC%84%9C-%EC%A0%95%ED%95%B4%EC%A3%BC%EA%B8%B0
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Gradle with JIB
+        run: ./gradlew clean --stacktrace -PtagName=$GITHUB_REF_NAME --build-file=./api/build.gradle.kts -Djib.console=plain -Djib.useOnlyProjectCache=true jib
