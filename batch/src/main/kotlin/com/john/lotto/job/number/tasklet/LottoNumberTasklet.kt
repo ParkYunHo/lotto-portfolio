@@ -40,47 +40,17 @@ class LottoNumberTasklet(
         val stepContext = chunkContext.stepContext
         val jobParameters = stepContext.jobParameters
 
-        val startDrwtNo = jobParameters.getOrDefault("startDrwtNo", "").toString()
-        val endDrwtNo = jobParameters.getOrDefault("endDrwtNo", "").toString()
+        val startDrwtNoParam = jobParameters.getOrDefault("startDrwtNo", "").toString()
+        val endDrwtNoParam = jobParameters.getOrDefault("endDrwtNo", "").toString()
 
-        if(startDrwtNo == "" && endDrwtNo == "") {
+        if(startDrwtNoParam == "" && endDrwtNoParam == "") {
             try {
                 // 마지막 로또회차 조회
                 val lastDrwtNo = numberRepository.findLastDrwtNo() ?: 0L
 
-                // 로또 당첨정보 조회 (by, 로또API)
-                val responseStr = lottoFeignComponent.lottoNumber(method = "getLottoNumber", drwNo = lastDrwtNo.plus(1).toString())
-                val response = Gson().fromJson(JsonParser.parseString(responseStr), TotalLottoNumberDto::class.java)
-                log.info(" >>> [number] response: $response")
-
-                if(response.returnValue == "success") {
-                    // 로또번호 저장
-                    val lottoNumberDto = LottoNumberDto(
-                        drwtNo = response.drwNo,
-                        drwtNo1 = response.drwtNo1,
-                        drwtNo2 = response.drwtNo2,
-                        drwtNo3 = response.drwtNo3,
-                        drwtNo4 = response.drwtNo4,
-                        drwtNo5 = response.drwtNo5,
-                        drwtNo6 = response.drwtNo6,
-                        bnusNo = response.bnusNo,
-                    )
-                    numberRepository.insertLottoNumber(input = lottoNumberDto)
-                    log.info(" >>> [number] Save lottoNumber - input: $lottoNumberDto")
-
-                    // 로또 당첨금 저장
-                    val lottoWinAmountDto = LottoWinAmountDto(
-                        drwtNo = response.drwNo,
-                        drwtDate = LocalDate.parse(response.drwNoDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                        totSellamnt = response.totSellamnt,
-                        firstWinamnt = response.firstWinamnt,
-                        firstPrzwnerCo = response.firstPrzwnerCo,
-                        firstAccumamnt = response.firstAccumamnt
-                    )
-                    amountRepository.insertLottoWinAmount(input = lottoWinAmountDto)
-                    log.info(" >>> [number] Save lottoWinAmount - input: $lottoWinAmountDto")
-                }else {
-                    log.warn(" >>> [number] Call Lotto API fail - lastDrwtNo: $lastDrwtNo")
+                // 로또정보 저장
+                val isSuccess = this.insertLottoInfo(drwtNo = lastDrwtNo.plus(1).toString())
+                if(!isSuccess) {
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }
@@ -90,28 +60,98 @@ class LottoNumberTasklet(
                 return RepeatStatus.FINISHED
             }
         }else {
-            // 수동배치처리
+            // ::::::::::::::: 수동배치처리 :::::::::::::::
             try{
-                log.info(" >>> [number][manual] MANUAL MODE !! - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
+                log.info(" >>> [number][manual] MANUAL MODE !! - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam")
 
-                if(startDrwtNo == "" || endDrwtNo == "") {
-                    log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
+                if(startDrwtNoParam == "" || endDrwtNoParam == "") {
+                    log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam")
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }
 
+                val startDrwtNo = startDrwtNoParam.toLong()
+                val endDrwtNo = endDrwtNoParam.toLong()
 
-
-
+                if(startDrwtNo > endDrwtNo) {
+                    // 유효성체크
+                    log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
+                    contribution.exitStatus = ExitStatus.FAILED
+                    return RepeatStatus.FINISHED
+                }else if(startDrwtNo == endDrwtNo) {
+                    // startDrwtNo와 endDrwtNo가 동일한 회차인 경우
+                    val isSuccess = this.insertLottoInfo(drwtNo = endDrwtNo.toString())
+                    if(!isSuccess) {
+                        contribution.exitStatus = ExitStatus.FAILED
+                        return RepeatStatus.FINISHED
+                    }
+                }else {
+                    // startDrwtNo와 endDrwtNo가 다른 회차인 경우
+                    for(drwtNo: Long in startDrwtNo..endDrwtNo) {
+                        val isSuccess = this.insertLottoInfo(drwtNo = drwtNo.toString())
+                        if(!isSuccess) {
+                            contribution.exitStatus = ExitStatus.FAILED
+                            return RepeatStatus.FINISHED
+                        }
+                    }
+                }
             }catch (e: Exception) {
                 log.error(" >>> [number][manual] Exception occurs - message: ${e.message}")
                 contribution.exitStatus = ExitStatus.FAILED
                 return RepeatStatus.FINISHED
             }
+            // ::::::::::::::: // 수동배치처리 :::::::::::::::
         }
 
         log.info(" >>> [number] BATCH END ########")
         return RepeatStatus.FINISHED
     }
 
+    /**
+     * 로또정보 저장
+     *
+     * @param drwtNo [String]
+     * @return [Boolean]
+     * @author yoonho
+     * @since 2023.06.29
+     */
+    private fun insertLottoInfo(drwtNo: String): Boolean {
+        // 로또 당첨정보 조회 (by, 로또API)
+        val responseStr = lottoFeignComponent.lottoNumber(method = "getLottoNumber", drwNo = drwtNo)
+        val response = Gson().fromJson(JsonParser.parseString(responseStr), TotalLottoNumberDto::class.java)
+        log.info(" >>> [insertLottoInfo] response: $response")
+
+        if(response.returnValue == "success") {
+            // 로또번호 저장
+            val lottoNumberDto = LottoNumberDto(
+                drwtNo = response.drwNo,
+                drwtNo1 = response.drwtNo1,
+                drwtNo2 = response.drwtNo2,
+                drwtNo3 = response.drwtNo3,
+                drwtNo4 = response.drwtNo4,
+                drwtNo5 = response.drwtNo5,
+                drwtNo6 = response.drwtNo6,
+                bnusNo = response.bnusNo,
+            )
+            numberRepository.insertLottoNumber(input = lottoNumberDto)
+            log.info(" >>> [insertLottoInfo] Save lottoNumber - input: $lottoNumberDto")
+
+            // 로또 당첨금 저장
+            val lottoWinAmountDto = LottoWinAmountDto(
+                drwtNo = response.drwNo,
+                drwtDate = LocalDate.parse(response.drwNoDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                totSellamnt = response.totSellamnt,
+                firstWinamnt = response.firstWinamnt,
+                firstPrzwnerCo = response.firstPrzwnerCo,
+                firstAccumamnt = response.firstAccumamnt
+            )
+            amountRepository.insertLottoWinAmount(input = lottoWinAmountDto)
+            log.info(" >>> [insertLottoInfo] Save lottoWinAmount - input: $lottoWinAmountDto")
+        }else {
+            log.warn(" >>> [insertLottoInfo] Call Lotto API fail - lastDrwtNo: $drwtNo")
+            return false
+        }
+
+        return true
+    }
 }
