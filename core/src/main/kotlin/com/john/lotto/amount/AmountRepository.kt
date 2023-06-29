@@ -1,13 +1,13 @@
 package com.john.lotto.amount
 
-import com.john.lotto.entity.QLottoWinAmount
 import com.john.lotto.amount.dto.LottoWinAmountDto
 import com.john.lotto.amount.dto.QLottoWinAmountDto
+import com.john.lotto.entity.QLottoWinAmount
 import com.querydsl.jpa.impl.JPAQueryFactory
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -18,8 +18,6 @@ class AmountRepository(
     @Qualifier("lottoQueryFactory")
     private val queryFactory: JPAQueryFactory
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
-
     private val lottoWinAmount = QLottoWinAmount.lottoWinAmount!!
 
 
@@ -41,7 +39,9 @@ class AmountRepository(
                     lottoWinAmount.totSellamnt,
                     lottoWinAmount.firstWinamnt,
                     lottoWinAmount.firstPrzwnerCo,
-                    lottoWinAmount.firstAccumamnt
+                    lottoWinAmount.firstAccumamnt,
+                    lottoWinAmount.updatedAt,
+                    lottoWinAmount.createdAt
                 )
             )
             .from(lottoWinAmount)
@@ -69,6 +69,8 @@ class AmountRepository(
                 lottoWinAmount.firstWinamnt,
                 lottoWinAmount.firstPrzwnerCo,
                 lottoWinAmount.firstAccumamnt,
+                lottoWinAmount.updatedAt,
+                lottoWinAmount.createdAt
             )
             .values(
                 input.drwtNo,
@@ -77,6 +79,8 @@ class AmountRepository(
                 input.firstWinamnt,
                 input.firstPrzwnerCo,
                 input.firstAccumamnt,
+                null,
+                LocalDateTime.now()
             )
             .execute()
 }

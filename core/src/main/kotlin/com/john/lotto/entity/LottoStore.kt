@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Comment
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -49,4 +50,11 @@ class LottoStore(
     @Column(name = "FIRMNM", nullable = false)
     @Comment("상호명")
     val firmnm: String,
+
+    @Column(name = "UPDATED_AT")
+    @Comment("업데이트 일자")
+    val updatedAt: LocalDateTime? = null,
+    @Column(name = "CREATED_AT", nullable = false)
+    @Comment("생성 일자")
+    val createdAt: LocalDateTime,
 )

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -42,7 +43,9 @@ class StoreRepository(
                 lottoStore.bplclocplc4,
                 lottoStore.bplcdorodtladres,
                 lottoStore.rtlrstrtelno,
-                lottoStore.firmnm
+                lottoStore.firmnm,
+                lottoStore.updatedAt,
+                lottoStore.createdAt
             )
             .values(
                 input.latitude,
@@ -53,7 +56,9 @@ class StoreRepository(
                 input.bplclocplc4,
                 input.bplcdorodtladres,
                 input.rtlrstrtelno,
-                input.firmnm
+                input.firmnm,
+                null,
+                LocalDateTime.now()
             )
             .execute()
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Comment
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -40,5 +41,12 @@ class LottoNumber(
     @Column(name = "BNUS_NO", nullable = false)
     @Comment("로또 당첨번호 보너스번호")
     val bnusNo: Long,
+
+    @Column(name = "UPDATED_AT")
+    @Comment("업데이트 일자")
+    val updatedAt: LocalDateTime? = null,
+    @Column(name = "CREATED_AT", nullable = false)
+    @Comment("생성 일자")
+    val createdAt: LocalDateTime,
 ) {
 }

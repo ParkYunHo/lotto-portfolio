@@ -4,10 +4,10 @@ import com.john.lotto.entity.QLottoNumber
 import com.john.lotto.number.dto.LottoNumberDto
 import com.john.lotto.number.dto.QLottoNumberDto
 import com.querydsl.jpa.impl.JPAQueryFactory
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -18,8 +18,6 @@ class NumberRepository(
     @Qualifier("lottoQueryFactory")
     private val queryFactory: JPAQueryFactory
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
-
     private val lottoNumber = QLottoNumber.lottoNumber!!
 
 
@@ -43,13 +41,29 @@ class NumberRepository(
                     lottoNumber.drwtNo4,
                     lottoNumber.drwtNo5,
                     lottoNumber.drwtNo6,
-                    lottoNumber.bnusNo
+                    lottoNumber.bnusNo,
+                    lottoNumber.updatedAt,
+                    lottoNumber.createdAt
                 )
             )
             .from(lottoNumber)
             .where(
                 lottoNumber.drwtNo.eq(drwtNo)
             )
+            .fetchFirst()
+
+    /**
+     * 마지막 로또회차정보 조회
+     *
+     * @return [Long]
+     * @author yoonho
+     * @since 2023.06.28
+     */
+    @Transactional(readOnly = true)
+    fun findLastDrwtNo(): Long? =
+        queryFactory
+            .select(lottoNumber.drwtNo.max().coalesce(0L))
+            .from(lottoNumber)
             .fetchFirst()
 
     /**
@@ -72,7 +86,9 @@ class NumberRepository(
                 lottoNumber.drwtNo4,
                 lottoNumber.drwtNo5,
                 lottoNumber.drwtNo6,
-                lottoNumber.bnusNo
+                lottoNumber.bnusNo,
+                lottoNumber.updatedAt,
+                lottoNumber.createdAt
             )
             .values(
                 input.drwtNo,
@@ -82,7 +98,9 @@ class NumberRepository(
                 input.drwtNo4,
                 input.drwtNo5,
                 input.drwtNo6,
-                input.bnusNo
+                input.bnusNo,
+                null,
+                LocalDateTime.now()
             )
             .execute()
 

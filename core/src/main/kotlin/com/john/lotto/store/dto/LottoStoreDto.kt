@@ -1,6 +1,7 @@
 package com.john.lotto.store.dto
 
 import com.querydsl.core.annotations.QueryProjection
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -21,4 +22,7 @@ data class LottoStoreDto @QueryProjection constructor(
     val rtlrstrtelno: String? = "",
 
     val firmnm: String? = "",
+
+    val updatedAt: LocalDateTime? = null,
+    val createdAt: LocalDateTime? = null
 )

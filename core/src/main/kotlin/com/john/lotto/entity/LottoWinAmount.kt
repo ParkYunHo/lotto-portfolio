@@ -6,6 +6,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Comment
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * @author yoonho
@@ -33,5 +34,12 @@ class LottoWinAmount(
     val firstPrzwnerCo: Long,
     @Column(name = "FIRST_ACCUM_AMNT", nullable = false)
     @Comment("1등 전체 당첨금액")
-    val firstAccumamnt: Long
+    val firstAccumamnt: Long,
+
+    @Column(name = "UPDATED_AT")
+    @Comment("업데이트 일자")
+    val updatedAt: LocalDateTime? = null,
+    @Column(name = "CREATED_AT", nullable = false)
+    @Comment("생성 일자")
+    val createdAt: LocalDateTime,
 )
