@@ -21,13 +21,16 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/**
+ * @author yoonho
+ * @since 2023.06.29
+ */
 @Component
 @StepScope
 class LottoNumberTasklet(
     private val numberRepository: NumberRepository,
     private val amountRepository: AmountRepository,
-
-    private val lottoFeignComponent: LottoFeignClient,
+    private val lottoFeignClient: LottoFeignClient,
 ): Tasklet, StepExecutionListener {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -117,7 +120,7 @@ class LottoNumberTasklet(
      */
     private fun insertLottoInfo(drwtNo: String): Boolean {
         // 로또 당첨정보 조회 (by, 로또API)
-        val responseStr = lottoFeignComponent.lottoNumber(method = "getLottoNumber", drwNo = drwtNo)
+        val responseStr = lottoFeignClient.lottoNumber(method = "getLottoNumber", drwNo = drwtNo)
         val response = Gson().fromJson(JsonParser.parseString(responseStr), TotalLottoNumberDto::class.java)
         log.info(" >>> [insertLottoInfo] response: $response")
 

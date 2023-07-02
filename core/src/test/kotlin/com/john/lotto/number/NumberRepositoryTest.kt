@@ -3,7 +3,9 @@ package com.john.lotto.number
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.john.lotto.CoreApplicationTests
+import com.john.lotto.entity.LottoStore
 import com.john.lotto.number.dto.LottoNumberDto
+import com.john.lotto.store.dto.LottoStoreDto
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Assertions.*
@@ -71,5 +73,25 @@ class NumberRepositoryTest(
                 result shouldNotBe null
             }
         }
+    }
+
+    Given("TEST") {
+        try {
+            val lottoStoreDto = LottoStoreDto(
+                    rtlrid = "11140696",
+                    latitude = 37.6076F,
+                    longitude = 126.925F,
+                    bplclocplc1 = "서울",
+                    bplclocplc2 = "은평구",
+
+                    bplcdorodtladres = "TEST"
+            )
+
+            val result = lottoStoreDto.toEntity()
+            log.info(" >>> result: $result")
+        }catch (e: Exception) {
+            log.error(" >>> Exception - e: ${e.message}")
+        }
+
     }
 })

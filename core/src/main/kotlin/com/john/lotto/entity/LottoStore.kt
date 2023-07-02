@@ -15,18 +15,21 @@ import java.time.LocalDateTime
 @Table(catalog = "LOTTO", name = "LOTTO_STORE_TB")
 class LottoStore(
     @Id
+    @Column(name = "RTLRID", nullable = false)
+    @Comment("판매점 ID")
+    val rtlrid: String,
+
     @Column(name = "LATITUDE", nullable = false)
     @Comment("판매점 위도")
     val latitude: Float,
-    @Id
     @Column(name = "LONGITUDE", nullable = false)
     @Comment("판매점 경도")
     val longitude: Float,
 
-    @Column(name = "BPLCLOCPLC1", nullable = false)
+    @Column(name = "BPLCLOCPLC1")
     @Comment("행정구역(시)")
     val bplclocplc1: String,
-    @Column(name = "BPLCLOCPLC2", nullable = false)
+    @Column(name = "BPLCLOCPLC2")
     @Comment("행정구역(구)")
     val bplclocplc2: String,
     @Column(name = "BPLCLOCPLC3")
@@ -53,7 +56,7 @@ class LottoStore(
 
     @Column(name = "UPDATED_AT")
     @Comment("업데이트 일자")
-    val updatedAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime,
     @Column(name = "CREATED_AT", nullable = false)
     @Comment("생성 일자")
     val createdAt: LocalDateTime,

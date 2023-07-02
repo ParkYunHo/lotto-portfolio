@@ -53,6 +53,10 @@ subprojects {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+        // 역직렬화 체크
+        implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+        implementation("com.fasterxml.jackson.core:jackson-databind")
+
         // Vault
         implementation("org.springframework.vault:spring-vault-core:3.0.0")
 

@@ -2,14 +2,20 @@ package com.john.lotto.config
 
 import com.john.lotto.common.handler.FeignErrorDecoder
 import feign.RequestInterceptor
+import feign.codec.Encoder
 import feign.codec.ErrorDecoder
+import feign.form.FormEncoder
+import feign.form.spring.SpringFormEncoder
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.ObjectFactory
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.cloud.openfeign.FeignFormatterRegistrar
+import org.springframework.cloud.openfeign.support.SpringEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar
-import org.springframework.http.MediaType
+import java.nio.charset.StandardCharsets
 
 /**
  * @author yoonho
@@ -46,8 +52,7 @@ class OpenFeignConfig {
     @Bean
     fun requestInterceptor(): RequestInterceptor =
         RequestInterceptor { interceptor ->
-            log.info(" >>> [requestInterceptor] path: ${interceptor.path()}, method: ${interceptor.method()}, body: ${interceptor.body()}, queries: ${interceptor.queries()}")
-            interceptor.header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+            log.info(" >>> [requestInterceptor] path: ${interceptor.path()}, method: ${interceptor.method()}, body: ${interceptor.body().toString(StandardCharsets.UTF_8)}, queries: ${interceptor.queries()}, header: ${interceptor.headers()}")
         }
 
     /**
@@ -60,4 +65,9 @@ class OpenFeignConfig {
     @Bean
     fun errorDecoder(): ErrorDecoder =
         FeignErrorDecoder()
+
+    @Bean
+    fun encoder(converters: ObjectFactory<HttpMessageConverters>): Encoder =
+        SpringFormEncoder(SpringEncoder(converters))
+
 }
