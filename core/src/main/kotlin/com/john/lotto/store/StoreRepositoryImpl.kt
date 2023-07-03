@@ -15,8 +15,8 @@ import java.time.LocalDateTime
  */
 @Repository
 class StoreRepositoryImpl(
-        @Qualifier("lottoQueryFactory")
-        private val queryFactory: JPAQueryFactory
+    @Qualifier("lottoQueryFactory")
+    private val queryFactory: JPAQueryFactory
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 

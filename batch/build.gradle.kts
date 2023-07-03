@@ -8,6 +8,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.jsoup:jsoup:1.16.1")
 
     testImplementation("org.springframework.batch:spring-batch-test")
 
