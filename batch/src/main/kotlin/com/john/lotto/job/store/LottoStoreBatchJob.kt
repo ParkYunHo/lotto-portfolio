@@ -1,5 +1,6 @@
 package com.john.lotto.job.store
 
+import com.john.lotto.common.tasklet.NoticeResultTasklet
 import com.john.lotto.job.store.tasklet.LottoStoreTasklet
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
@@ -19,7 +20,8 @@ import org.springframework.transaction.PlatformTransactionManager
  */
 @Configuration
 class LottoStoreBatchJob (
-    private val lottoStoreTasklet: LottoStoreTasklet
+    private val lottoStoreTasklet: LottoStoreTasklet,
+    private val noticeResultTasklet: NoticeResultTasklet,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -27,7 +29,10 @@ class LottoStoreBatchJob (
     fun lottoStoreJob(jobRepository: JobRepository, transactionManager: JpaTransactionManager): Job =
         JobBuilder("lottoStoreJob", jobRepository)
             .incrementer(RunIdIncrementer())
+            // 로또판매점 조회
             .start(lottoStoreStep(jobRepository, transactionManager))
+            // 배치결과 알림전송
+            .next(lottoStoreNoticeResultStep(jobRepository, transactionManager))
             .build()
 
     @Bean
@@ -36,4 +41,9 @@ class LottoStoreBatchJob (
             .tasklet(lottoStoreTasklet, transactionManager)
             .build()
 
+    @Bean
+    fun lottoStoreNoticeResultStep(jobRepository: JobRepository, transactionManager: PlatformTransactionManager): Step =
+        StepBuilder("lottoStoreNoticeResultStep", jobRepository)
+            .tasklet(noticeResultTasklet, transactionManager)
+            .build()
 }

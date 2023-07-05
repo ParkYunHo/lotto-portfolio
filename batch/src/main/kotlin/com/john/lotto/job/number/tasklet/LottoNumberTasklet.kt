@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.john.lotto.amount.AmountRepository
 import com.john.lotto.amount.dto.LottoWinAmountDto
+import com.john.lotto.common.utils.NoticeMessageUtils
 import com.john.lotto.number.NumberRepository
 import com.john.lotto.number.dto.LottoNumberDto
 import com.john.lotto.rest.LottoFeignClient
@@ -16,8 +17,10 @@ import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
+import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -34,8 +37,11 @@ class LottoNumberTasklet(
 ): Tasklet, StepExecutionListener {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    var jobExecutionContext: ExecutionContext? = null
+
     override fun beforeStep(stepExecution: StepExecution) {
-        super.beforeStep(stepExecution)
+        val jobExecution = stepExecution.jobExecution
+        this.jobExecutionContext = jobExecution.executionContext
     }
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
@@ -54,11 +60,21 @@ class LottoNumberTasklet(
                 // 로또정보 저장
                 val isSuccess = this.insertLottoInfo(drwtNo = lastDrwtNo.plus(1).toString())
                 if(!isSuccess) {
+                    NoticeMessageUtils.setFailMessage(
+                        jobExecutionContext = jobExecutionContext!!,
+                        step = "lottoNumberStep",
+                        message = "[number] fail insert LottoInfo - drwtNo: $lastDrwtNo"
+                    )
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }
             }catch (e: Exception) {
                 log.error(" >>> [number] Exception occurs - message: ${e.message}")
+                NoticeMessageUtils.setFailMessage(
+                    jobExecutionContext = jobExecutionContext!!,
+                    step = "lottoNumberStep",
+                    message = e.message ?: "[number] Exception occurs"
+                )
                 contribution.exitStatus = ExitStatus.FAILED
                 return RepeatStatus.FINISHED
             }
@@ -69,6 +85,11 @@ class LottoNumberTasklet(
 
                 if(startDrwtNoParam == "" || endDrwtNoParam == "") {
                     log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam")
+                    NoticeMessageUtils.setFailMessage(
+                        jobExecutionContext = jobExecutionContext!!,
+                        step = "lottoNumberStep",
+                        message = "[number][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam"
+                    )
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }
@@ -79,12 +100,22 @@ class LottoNumberTasklet(
                 if(startDrwtNo > endDrwtNo) {
                     // 유효성체크
                     log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
+                    NoticeMessageUtils.setFailMessage(
+                        jobExecutionContext = jobExecutionContext!!,
+                        step = "lottoNumberStep",
+                        message = "[number][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
+                    )
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }else if(startDrwtNo == endDrwtNo) {
                     // startDrwtNo와 endDrwtNo가 동일한 회차인 경우
                     val isSuccess = this.insertLottoInfo(drwtNo = endDrwtNo.toString())
                     if(!isSuccess) {
+                        NoticeMessageUtils.setFailMessage(
+                            jobExecutionContext = jobExecutionContext!!,
+                            step = "lottoNumberStep",
+                            message = "[number][manual] fail insert LottoInfo - currentDrwtNo: $endDrwtNo"
+                        )
                         contribution.exitStatus = ExitStatus.FAILED
                         return RepeatStatus.FINISHED
                     }
@@ -93,6 +124,11 @@ class LottoNumberTasklet(
                     for(drwtNo: Long in startDrwtNo..endDrwtNo) {
                         val isSuccess = this.insertLottoInfo(drwtNo = drwtNo.toString())
                         if(!isSuccess) {
+                            NoticeMessageUtils.setFailMessage(
+                                jobExecutionContext = jobExecutionContext!!,
+                                step = "lottoNumberStep",
+                                message = "[number][manual] fail insert LottoInfo - currentDrwtNo: $drwtNo, startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
+                            )
                             contribution.exitStatus = ExitStatus.FAILED
                             return RepeatStatus.FINISHED
                         }
@@ -100,6 +136,11 @@ class LottoNumberTasklet(
                 }
             }catch (e: Exception) {
                 log.error(" >>> [number][manual] Exception occurs - message: ${e.message}")
+                NoticeMessageUtils.setFailMessage(
+                    jobExecutionContext = jobExecutionContext!!,
+                    step = "lottoNumberStep",
+                    message = e.message ?: "[number][manual] Exception occurs"
+                )
                 contribution.exitStatus = ExitStatus.FAILED
                 return RepeatStatus.FINISHED
             }
@@ -107,6 +148,10 @@ class LottoNumberTasklet(
         }
 
         log.info(" >>> [number] BATCH END ########")
+        NoticeMessageUtils.setSuccessMessage(
+            jobExecutionContext = jobExecutionContext!!,
+            step = "lottoNumberStep"
+        )
         return RepeatStatus.FINISHED
     }
 
@@ -118,43 +163,48 @@ class LottoNumberTasklet(
      * @author yoonho
      * @since 2023.06.29
      */
-    private fun insertLottoInfo(drwtNo: String): Boolean {
-        // 로또 당첨정보 조회 (by, 로또API)
-        val responseStr = lottoFeignClient.lottoNumber(method = "getLottoNumber", drwNo = drwtNo)
-        val response = Gson().fromJson(JsonParser.parseString(responseStr), TotalLottoNumberDto::class.java)
-        log.info(" >>> [insertLottoInfo] response: $response")
+    @Transactional
+    fun insertLottoInfo(drwtNo: String): Boolean {
+        try {
+            // 로또 당첨정보 조회 (by, 로또API)
+            val responseStr = lottoFeignClient.lottoNumber(method = "getLottoNumber", drwNo = drwtNo)
+            val response = Gson().fromJson(JsonParser.parseString(responseStr), TotalLottoNumberDto::class.java)
+            log.info(" >>> [insertLottoInfo] response: $response")
 
-        if(response.returnValue == "success") {
-            // 로또번호 저장
-            val lottoNumberDto = LottoNumberDto(
-                drwtNo = response.drwNo,
-                drwtNo1 = response.drwtNo1,
-                drwtNo2 = response.drwtNo2,
-                drwtNo3 = response.drwtNo3,
-                drwtNo4 = response.drwtNo4,
-                drwtNo5 = response.drwtNo5,
-                drwtNo6 = response.drwtNo6,
-                bnusNo = response.bnusNo,
-            )
-            numberRepository.insertLottoNumber(input = lottoNumberDto)
-            log.info(" >>> [insertLottoInfo] Save lottoNumber - input: $lottoNumberDto")
+            if(response.returnValue == "success") {
+                // 로또번호 저장
+                val lottoNumberDto = LottoNumberDto(
+                    drwtNo = response.drwNo,
+                    drwtNo1 = response.drwtNo1,
+                    drwtNo2 = response.drwtNo2,
+                    drwtNo3 = response.drwtNo3,
+                    drwtNo4 = response.drwtNo4,
+                    drwtNo5 = response.drwtNo5,
+                    drwtNo6 = response.drwtNo6,
+                    bnusNo = response.bnusNo,
+                )
+                numberRepository.insertLottoNumber(input = lottoNumberDto)
+                log.info(" >>> [insertLottoInfo] Save lottoNumber - input: $lottoNumberDto")
 
-            // 로또 당첨금 저장
-            val lottoWinAmountDto = LottoWinAmountDto(
-                drwtNo = response.drwNo,
-                drwtDate = LocalDate.parse(response.drwNoDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                totSellamnt = response.totSellamnt,
-                firstWinamnt = response.firstWinamnt,
-                firstPrzwnerCo = response.firstPrzwnerCo,
-                firstAccumamnt = response.firstAccumamnt
-            )
-            amountRepository.insertLottoWinAmount(input = lottoWinAmountDto)
-            log.info(" >>> [insertLottoInfo] Save lottoWinAmount - input: $lottoWinAmountDto")
-        }else {
-            log.warn(" >>> [insertLottoInfo] Call Lotto API fail - lastDrwtNo: $drwtNo")
-            return false
+                // 로또 당첨금 저장
+                val lottoWinAmountDto = LottoWinAmountDto(
+                    drwtNo = response.drwNo,
+                    drwtDate = LocalDate.parse(response.drwNoDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                    totSellamnt = response.totSellamnt,
+                    firstWinamnt = response.firstWinamnt,
+                    firstPrzwnerCo = response.firstPrzwnerCo,
+                    firstAccumamnt = response.firstAccumamnt
+                )
+                amountRepository.insertLottoWinAmount(input = lottoWinAmountDto)
+                log.info(" >>> [insertLottoInfo] Save lottoWinAmount - input: $lottoWinAmountDto")
+            }else {
+                log.warn(" >>> [insertLottoInfo] Call Lotto API fail - lastDrwtNo: $drwtNo")
+                return false
+            }
+            return true
+        }catch (e: Exception) {
+            log.error(" >>> [insertLottoInfo] Exception occurs - message: ${e.message}")
+            return false;
         }
-
-        return true
     }
 }

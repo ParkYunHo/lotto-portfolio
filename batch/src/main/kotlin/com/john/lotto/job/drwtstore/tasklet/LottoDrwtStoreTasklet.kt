@@ -1,5 +1,6 @@
 package com.john.lotto.job.drwtstore.tasklet
 
+import com.john.lotto.common.utils.NoticeMessageUtils
 import com.john.lotto.drwtstore.DrwtStoreRepository
 import com.john.lotto.drwtstore.dto.DrwtStoreDto
 import org.jsoup.Jsoup
@@ -12,6 +13,7 @@ import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
+import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -28,8 +30,11 @@ class LottoDrwtStoreTasklet(
 ): Tasklet, StepExecutionListener {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    var jobExecutionContext: ExecutionContext? = null
+
     override fun beforeStep(stepExecution: StepExecution) {
-        super.beforeStep(stepExecution)
+        val jobExecution = stepExecution.jobExecution
+        this.jobExecutionContext = jobExecution.executionContext
     }
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
@@ -46,6 +51,11 @@ class LottoDrwtStoreTasklet(
                 val drwtStoreList = this.crawlingDrwtStore("")
                 if(drwtStoreList.isEmpty()) {
                     log.error(" >>> [drwtStore] Fail Crawling DrwtStore")
+                    NoticeMessageUtils.setFailMessage(
+                        jobExecutionContext = jobExecutionContext!!,
+                        step = "lottoDrwtStoreStep",
+                        message = "[drwtStore] Fail Crawling DrwtStore"
+                    )
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }
@@ -56,6 +66,11 @@ class LottoDrwtStoreTasklet(
                 }
             }catch (e: Exception) {
                 log.error(" >>> [drwtStore] Exception occurs - message: ${e.message}")
+                NoticeMessageUtils.setFailMessage(
+                    jobExecutionContext = jobExecutionContext!!,
+                    step = "lottoDrwtStoreStep",
+                    message = e.message ?: "[drwtStore] Exception occurs"
+                )
                 contribution.exitStatus = ExitStatus.FAILED
                 return RepeatStatus.FINISHED
             }
@@ -66,6 +81,11 @@ class LottoDrwtStoreTasklet(
 
                 if(startDrwtNoParam == "" || endDrwtNoParam == "") {
                     log.warn(" >>> [drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam")
+                    NoticeMessageUtils.setFailMessage(
+                        jobExecutionContext = jobExecutionContext!!,
+                        step = "lottoDrwtStoreStep",
+                        message = "[drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam"
+                    )
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }
@@ -76,6 +96,11 @@ class LottoDrwtStoreTasklet(
                 if(startDrwtNo > endDrwtNo) {
                     // 유효성체크
                     log.warn(" >>> [drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
+                    NoticeMessageUtils.setFailMessage(
+                        jobExecutionContext = jobExecutionContext!!,
+                        step = "lottoDrwtStoreStep",
+                        message = "[drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
+                    )
                     contribution.exitStatus = ExitStatus.FAILED
                     return RepeatStatus.FINISHED
                 }else if(startDrwtNo == endDrwtNo) {
@@ -84,6 +109,11 @@ class LottoDrwtStoreTasklet(
                     val drwtStoreList = this.crawlingDrwtStore(drwtNoParam = endDrwtNo.toString())
                     if(drwtStoreList.isEmpty()) {
                         log.error(" >>> [drwtStore][manual] Fail Crawling DrwtStore")
+                        NoticeMessageUtils.setFailMessage(
+                            jobExecutionContext = jobExecutionContext!!,
+                            step = "lottoDrwtStoreStep",
+                            message = "[drwtStore][manual] Fail Crawling DrwtStore - currentDrwtNo: $endDrwtNo"
+                        )
                         contribution.exitStatus = ExitStatus.FAILED
                         return RepeatStatus.FINISHED
                     }
@@ -99,6 +129,11 @@ class LottoDrwtStoreTasklet(
                         val drwtStoreList = this.crawlingDrwtStore(drwtNoParam = drwtNo.toString())
                         if(drwtStoreList.isEmpty()) {
                             log.error(" >>> [drwtStore][manual] Fail Crawling DrwtStore")
+                            NoticeMessageUtils.setFailMessage(
+                                jobExecutionContext = jobExecutionContext!!,
+                                step = "lottoDrwtStoreStep",
+                                message = "[drwtStore][manual] Fail Crawling DrwtStore - currentDrwtNo: $endDrwtNo, startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
+                            )
                             contribution.exitStatus = ExitStatus.FAILED
                             return RepeatStatus.FINISHED
                         }
@@ -111,6 +146,11 @@ class LottoDrwtStoreTasklet(
                 }
             }catch (e: Exception) {
                 log.error(" >>> [drwtStore][manual] Exception occurs - message: ${e.message}")
+                NoticeMessageUtils.setFailMessage(
+                    jobExecutionContext = jobExecutionContext!!,
+                    step = "lottoDrwtStoreStep",
+                    message = e.message ?: "[drwtStore][manual] Exception occurs"
+                )
                 contribution.exitStatus = ExitStatus.FAILED
                 return RepeatStatus.FINISHED
             }
@@ -118,6 +158,10 @@ class LottoDrwtStoreTasklet(
         }
 
         log.info(" >>> [drwtStore] BATCH END ########")
+        NoticeMessageUtils.setSuccessMessage(
+            jobExecutionContext = jobExecutionContext!!,
+            step = "lottoDrwtStoreStep"
+        )
         return RepeatStatus.FINISHED
     }
 

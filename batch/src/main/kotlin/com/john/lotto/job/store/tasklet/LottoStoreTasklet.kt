@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.john.lotto.common.utils.NoticeMessageUtils
 import com.john.lotto.entity.LottoStore
 import com.john.lotto.rest.LottoFeignClient
 import com.john.lotto.rest.dto.LottoStoreInfoDto
@@ -19,6 +20,7 @@ import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
+import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -30,17 +32,17 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 @StepScope
 class LottoStoreTasklet(
-        private val storeRepositoryImpl: StoreRepositoryImpl,
         private val storeRepository: StoreRepository,
-
         private val lottoFeignClient: LottoFeignClient,
-
         private val om: ObjectMapper
 ): Tasklet, StepExecutionListener {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    var jobExecutionContext: ExecutionContext? = null
+
     override fun beforeStep(stepExecution: StepExecution) {
-        super.beforeStep(stepExecution)
+        val jobExecution = stepExecution.jobExecution
+        this.jobExecutionContext = jobExecution.executionContext
     }
 
     @Transactional
@@ -105,11 +107,20 @@ class LottoStoreTasklet(
             log.info(" >>> [store] SaveAll LottoStore Data")
         }catch (e: Exception) {
             log.error(" >>> [store] Exception occurs - message: ${e.message}")
+            NoticeMessageUtils.setFailMessage(
+                jobExecutionContext = jobExecutionContext!!,
+                step = "lottoStoreStep",
+                message = e.message ?: "[store] Exception occurs"
+            )
             contribution.exitStatus = ExitStatus.FAILED
             return RepeatStatus.FINISHED
         }
 
         log.info(" >>> [store] BATCH END ########")
+        NoticeMessageUtils.setSuccessMessage(
+            jobExecutionContext = jobExecutionContext!!,
+            step = "lottoStoreStep"
+        )
         return RepeatStatus.FINISHED
     }
 
