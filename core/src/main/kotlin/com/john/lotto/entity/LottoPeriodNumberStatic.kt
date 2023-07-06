@@ -10,40 +10,42 @@ import java.time.LocalDateTime
 
 /**
  * @author yoonho
- * @since 2023.06.21
+ * @since 2023.07.06
  */
 @Entity
-@Table(catalog = "LOTTO", name = "LOTTO_NUMBER_TB")
-class LottoNumber(
-    @Id
-    @Column(name = "DRWT_NO", nullable = false)
-    @Comment("로또 회차")
-    val drwtNo: Long,
+@Table(catalog = "LOTTO", name = "LOTTO_STATIC_NUMBER_TB")
+class LottoPeriodNumberStatic(
+    // TODO: 당첨번호 통계를 어떻게 낼지 확인
 
-    @Column(name = "DRWT_DATE", nullable = false)
-    @Comment("로또 추첨일자")
-    val drwtDate: LocalDate,
+    @Id
+    @Column(name = "PERIOD_YEAR", nullable = false)
+    @Comment("로또 회차")
+    val year: Long,
+    @Id
+    @Column(name = "PERIOD_MONTH", nullable = false)
+    @Comment("로또 회차")
+    val month: Long,
+
+
     @Column(name = "DRWT_NO_1", nullable = false)
-    @Comment("로또 당첨번호 1번")
+    @Comment("로또 당첨숫자 1번")
     val drwtNo1: Long,
     @Column(name = "DRWT_NO_2", nullable = false)
-    @Comment("로또 당첨번호 2번")
+    @Comment("로또 당첨숫자 2번")
     val drwtNo2: Long,
     @Column(name = "DRWT_NO_3", nullable = false)
-    @Comment("로또 당첨번호 3번")
+    @Comment("로또 당첨숫자 3번")
     val drwtNo3: Long,
     @Column(name = "DRWT_NO_4", nullable = false)
-    @Comment("로또 당첨번호 4번")
+    @Comment("로또 당첨숫자 4번")
     val drwtNo4: Long,
     @Column(name = "DRWT_NO_5", nullable = false)
-    @Comment("로또 당첨번호 5번")
+    @Comment("로또 당첨숫자 5번")
     val drwtNo5: Long,
     @Column(name = "DRWT_NO_6", nullable = false)
-    @Comment("로또 당첨번호 6번")
+    @Comment("로또 당첨숫자 6번")
     val drwtNo6: Long,
-    @Column(name = "BNUS_NO", nullable = false)
-    @Comment("로또 당첨번호 보너스번호")
-    val bnusNo: Long,
+
 
     @Column(name = "UPDATED_AT")
     @Comment("업데이트 일자")

@@ -175,6 +175,7 @@ class LottoNumberTasklet(
                 // 로또번호 저장
                 val lottoNumberDto = LottoNumberDto(
                     drwtNo = response.drwNo,
+                    drwtDate = LocalDate.parse(response.drwNoDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                     drwtNo1 = response.drwtNo1,
                     drwtNo2 = response.drwtNo2,
                     drwtNo3 = response.drwtNo3,

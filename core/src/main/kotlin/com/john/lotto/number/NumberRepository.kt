@@ -35,6 +35,7 @@ class NumberRepository(
             .select(
                 QLottoNumberDto(
                     lottoNumber.drwtNo,
+                    lottoNumber.drwtDate,
                     lottoNumber.drwtNo1,
                     lottoNumber.drwtNo2,
                     lottoNumber.drwtNo3,
@@ -80,6 +81,7 @@ class NumberRepository(
             .insert(lottoNumber)
             .columns(
                 lottoNumber.drwtNo,
+                lottoNumber.drwtDate,
                 lottoNumber.drwtNo1,
                 lottoNumber.drwtNo2,
                 lottoNumber.drwtNo3,
@@ -92,6 +94,7 @@ class NumberRepository(
             )
             .values(
                 input.drwtNo,
+                input.drwtDate,
                 input.drwtNo1,
                 input.drwtNo2,
                 input.drwtNo3,

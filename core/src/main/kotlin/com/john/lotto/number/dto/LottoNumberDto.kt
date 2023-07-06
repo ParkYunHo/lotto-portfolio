@@ -1,6 +1,7 @@
 package com.john.lotto.number.dto
 
 import com.querydsl.core.annotations.QueryProjection
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
@@ -10,6 +11,7 @@ import java.time.LocalDateTime
 data class LottoNumberDto @QueryProjection constructor(
     val drwtNo: Long? = -1L,
 
+    val drwtDate: LocalDate? = null,
     val drwtNo1: Long? = -1L,
     val drwtNo2: Long? = -1L,
     val drwtNo3: Long? = -1L,
