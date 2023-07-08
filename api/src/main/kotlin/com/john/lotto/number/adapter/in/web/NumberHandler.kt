@@ -3,7 +3,6 @@ package com.john.lotto.number.adapter.`in`.web
 import com.john.lotto.common.dto.BaseResponse
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.number.application.port.`in`.FindLottoNumberUseCase
-import feign.FeignException.BadRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest

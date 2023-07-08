@@ -1,1 +1,8 @@
 
+auth:
+  url:
+    kauth: https://kauth.kakao.com
+  conn:
+    connect-timeout: 3000
+    read-timeout: 2000
+    user-agent: lotto-portfolio

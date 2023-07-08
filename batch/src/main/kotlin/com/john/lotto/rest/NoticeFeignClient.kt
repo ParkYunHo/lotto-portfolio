@@ -2,13 +2,10 @@ package com.john.lotto.rest
 
 import com.john.lotto.config.OpenFeignConfig
 import com.john.lotto.rest.dto.LottoStoreInput
-import feign.Headers
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * @author yoonho

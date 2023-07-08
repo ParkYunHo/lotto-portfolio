@@ -5,7 +5,6 @@ import feign.RequestInterceptor
 import feign.Retryer
 import feign.codec.Encoder
 import feign.codec.ErrorDecoder
-import feign.form.FormEncoder
 import feign.form.spring.SpringFormEncoder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
