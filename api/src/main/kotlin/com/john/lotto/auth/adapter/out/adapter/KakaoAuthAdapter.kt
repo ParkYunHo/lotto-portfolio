@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 
@@ -22,7 +21,7 @@ class KakaoAuthAdapter(
 ): AuthPort {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    override fun authorize(): Mono<Void> {
+    override fun authorize(): Mono<String> {
         try {
             val kauthUrl = EnvironmentUtils.getProperty("auth.api.kauth", "https://kauth.kakao.com")
             val clientId = EnvironmentUtils.getProperty("auth.key.client-id", "")
@@ -39,33 +38,23 @@ class KakaoAuthAdapter(
                 .queryParams(queryParams)
                 .build(false)
 
+            log.info(" >>> [authorize] request - url: ${uriComponent.toUriString()}")
             return defaultWebClient
                 .get()
                 .uri(uriComponent.toUri())
-                .exchangeToMono<Void?> {
+                .exchangeToMono {
                     if(it.statusCode().is3xxRedirection) {
-                        val location = it.headers().header(HttpHeaders.LOCATION).get(0)
-                        log.info(" >>> [authorize] redirect - location: $location")
-                        return@exchangeToMono this.redirect(location)
-                    }else{
-                        return@exchangeToMono Mono.empty()
+                        val location = it.headers().header(HttpHeaders.LOCATION).firstOrNull()
+                        if(!location.isNullOrEmpty()) {
+                            return@exchangeToMono Mono.just(location)
+                        }
                     }
+                    return@exchangeToMono Mono.empty()
                 }
-                .log()
         }catch (e: Exception) {
             throw e
         }
     }
-
-    private fun redirect(url: String): Mono<Void> =
-        defaultWebClient
-            .get()
-            .uri(url)
-            .exchangeToMono {
-                return@exchangeToMono it.bodyToMono(Void::class.java)
-            }
-            .log()
-
 
     override fun token(state: String, code: String): Mono<TokenInfo> {
         try{
@@ -82,7 +71,7 @@ class KakaoAuthAdapter(
                 .queryParams(params)
                 .build(false)
 
-            log.info(" >>> [token] request - url: ${uriComponents.toUriString()}, clientId: $clientId")
+            log.info(" >>> [token] request - url: ${uriComponents.toUriString()}")
             return defaultWebClient
                 .post()
                 .uri(uriComponents.toUri())

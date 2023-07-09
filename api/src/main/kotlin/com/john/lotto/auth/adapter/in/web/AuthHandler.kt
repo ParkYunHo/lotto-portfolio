@@ -4,10 +4,14 @@ import com.john.lotto.auth.application.port.`in`.AuthorizeUseCase
 import com.john.lotto.common.dto.BaseResponse
 import com.john.lotto.common.exception.BadRequestException
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
+import java.net.URI
 
 /**
  * @author yoonho
@@ -21,7 +25,7 @@ class AuthHandler(
 
     fun authorize(request: ServerRequest): Mono<ServerResponse> =
         authorizeUseCase.authorize()
-            .flatMap { BaseResponse().successNoContent() }
+            .flatMap { ServerResponse.temporaryRedirect(URI(it)).build() }
 
     fun token(request: ServerRequest): Mono<ServerResponse> =
         authorizeUseCase.token(

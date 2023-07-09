@@ -17,7 +17,7 @@ class AuthService(
 ): AuthorizeUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    override fun authorize(): Mono<Void> =
+    override fun authorize(): Mono<String> =
         authPort.authorize()
 
     override fun token(state: String, code: String): Mono<TokenInfo> =

@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono
  * @since 2023.07.07
  */
 interface AuthorizeUseCase {
-    fun authorize(): Mono<Void>
+    fun authorize(): Mono<String>
 
     fun token(state: String, code: String): Mono<TokenInfo>
 }
