@@ -1,6 +1,6 @@
 package com.john.lotto.auth.application
 
-import com.john.lotto.auth.application.dto.TokenInfo
+import com.john.lotto.auth.application.dto.ResultTokenInfo
 import com.john.lotto.auth.application.port.`in`.AuthorizeUseCase
 import com.john.lotto.auth.application.port.out.AuthPort
 import org.slf4j.LoggerFactory
@@ -20,6 +20,9 @@ class AuthService(
     override fun authorize(): Mono<String> =
         authPort.authorize()
 
-    override fun token(state: String, code: String): Mono<TokenInfo> =
+    override fun token(state: String, code: String): Mono<ResultTokenInfo> =
         authPort.token(state, code)
+            .flatMap {
+                Mono.just(ResultTokenInfo(token = it.idToken!!))
+            }
 }

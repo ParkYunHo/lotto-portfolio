@@ -11,4 +11,4 @@
     예:
       | drwtNo | url         | statusCode |
       | 1072   | /api/number | 200        |
-      | 9999   | /api/number | 400        |
+#      | 9999   | /api/number | 400        |

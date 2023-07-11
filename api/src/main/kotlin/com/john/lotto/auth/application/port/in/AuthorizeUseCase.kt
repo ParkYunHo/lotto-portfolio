@@ -1,6 +1,6 @@
 package com.john.lotto.auth.application.port.`in`
 
-import com.john.lotto.auth.application.dto.TokenInfo
+import com.john.lotto.auth.application.dto.ResultTokenInfo
 import reactor.core.publisher.Mono
 
 /**
@@ -10,5 +10,5 @@ import reactor.core.publisher.Mono
 interface AuthorizeUseCase {
     fun authorize(): Mono<String>
 
-    fun token(state: String, code: String): Mono<TokenInfo>
+    fun token(state: String, code: String): Mono<ResultTokenInfo>
 }

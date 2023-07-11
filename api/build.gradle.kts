@@ -10,6 +10,12 @@ dependencies {
 
     implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
 
+    // JWT
+    implementation("com.nimbusds:nimbus-jose-jwt:9.25.6")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
     // Cucumber
     testImplementation("io.cucumber:cucumber-java:7.12.1")
     testImplementation("io.cucumber:cucumber-spring:7.12.1")

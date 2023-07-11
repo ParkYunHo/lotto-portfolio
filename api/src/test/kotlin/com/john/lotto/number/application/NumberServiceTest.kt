@@ -1,17 +1,24 @@
 package com.john.lotto.number.application
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.john.lotto.ApiApplicationTests
+import com.john.lotto.common.dto.JwtTokenInfo
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Assertions.*
 import org.slf4j.LoggerFactory
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import java.time.Instant
+import java.time.LocalDateTime
+import java.util.*
 
 @SpringBootTest(classes = [ApiApplicationTests::class])
 @ActiveProfiles("api-test")
 class NumberServiceTest(
-    private val numberService: NumberService
+    private val numberService: NumberService,
+    private val om: ObjectMapper
 ): BehaviorSpec({
     val log = LoggerFactory.getLogger(this::class.java)
 
@@ -26,5 +33,23 @@ class NumberServiceTest(
                 result shouldNotBe null
             }
         }
+    }
+
+    Given("TEST") {
+        val t = "eyJhdWQiOiJmYTUwOTU4YzdiMGVmZjljZWJiYzM1ODE1ODY2ZjM3OCIsInN1YiI6IjI4OTk5NzM2NjMiLCJhdXRoX3RpbWUiOjE2ODkwNzg4MTAsImlzcyI6Imh0dHBzOi8va2F1dGgua2FrYW8uY29tIiwibmlja25hbWUiOiLrsJXsnKTtmLgiLCJleHAiOjE2ODkxMDA0MTAsImlhdCI6MTY4OTA3ODgxMH0"
+
+        val payload = om.readValue(
+            String(Base64.getUrlDecoder().decode(t)),
+            object: TypeReference<JwtTokenInfo.Payload>() {}
+        )
+
+
+        val instant = Instant.ofEpochSecond(payload.exp.toLong())
+//        val date = Date.from(instant)
+
+        val date = LocalDateTime.ofInstant(instant, TimeZone.getDefault().toZoneId())
+
+        log.info(" >>> payload: $payload, exp: $date")
+
     }
 })

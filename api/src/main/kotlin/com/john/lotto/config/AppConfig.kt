@@ -3,8 +3,6 @@ package com.john.lotto.config
 import com.john.lotto.common.utils.EnvironmentUtils
 import jakarta.annotation.PostConstruct
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 
 /**
