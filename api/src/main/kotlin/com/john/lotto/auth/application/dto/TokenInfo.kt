@@ -12,13 +12,13 @@ data class TokenInfo(
     @field:JsonProperty("access_token")
     val accessToken: String,
     @field:JsonProperty("id_token")
-    val idToken: String? = "",
+    val idToken: String,
     @field:JsonProperty("expires_in")
     val expiresIn: Long,
     @field:JsonProperty("refresh_token")
-    val refreshToken: String,
+    val refreshToken: String? = "",
     @field:JsonProperty("refresh_token_expires_in")
-    val refreshTokenExpiresIn: Long,
+    val refreshTokenExpiresIn: Long? = 0L,
     @field:JsonProperty("scope")
     val scope: String? = ""
 )

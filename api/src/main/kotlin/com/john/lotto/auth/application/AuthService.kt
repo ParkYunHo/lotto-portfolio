@@ -17,12 +17,52 @@ class AuthService(
 ): AuthorizeUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * 인가코드 요청
+     *
+     * @return [Mono]<[String]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     override fun authorize(): Mono<String> =
         authPort.authorize()
 
+    /**
+     * idToken 발급
+     *
+     * @param state [String]
+     * @param code [String]
+     * @return [Mono]<[ResultTokenInfo]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     override fun token(state: String, code: String): Mono<ResultTokenInfo> =
         authPort.token(state, code)
             .flatMap {
-                Mono.just(ResultTokenInfo(token = it.idToken!!))
+                Mono.just(
+                    ResultTokenInfo(
+                        idToken = it.idToken,
+                        refreshToken = it.refreshToken
+                    )
+                )
+            }
+
+    /**
+     * idToken 재발급
+     *
+     * @param refreshToken [String]
+     * @return [Mono]<[ResultTokenInfo]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
+    override fun refresh(refreshToken: String): Mono<ResultTokenInfo> =
+        authPort.refresh(refreshToken = refreshToken)
+            .flatMap {
+                Mono.just(
+                    ResultTokenInfo(
+                        idToken = it.idToken,
+                        refreshToken = it.refreshToken
+                    )
+                )
             }
 }

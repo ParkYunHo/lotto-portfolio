@@ -41,6 +41,7 @@ class AuthorizationFilter(
         if(TOKEN_PREFIX in authorization) {
             val idToken = authorization.substringAfter(TOKEN_PREFIX)
             if(idToken.isNotEmpty()) {
+                // idToken 유효성검증
                 return authPort.validate(idToken)
                     .flatMap {
                         exchange.attributes[USER_ID_ATTRIBUTE] = it

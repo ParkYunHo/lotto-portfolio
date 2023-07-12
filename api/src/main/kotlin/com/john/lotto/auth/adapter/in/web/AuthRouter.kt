@@ -21,6 +21,7 @@ class AuthRouter(
         accept(MediaType.APPLICATION_JSON).nest {
             GET("/auth/authorize", authHandler::authorize)
             GET("/auth/token", authHandler::token)
+            GET("/auth/refresh", authHandler::refresh)
         }
     }
 }

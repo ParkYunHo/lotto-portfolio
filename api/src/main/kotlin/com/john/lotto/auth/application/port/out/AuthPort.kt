@@ -9,11 +9,52 @@ import reactor.core.publisher.Mono
  * @since 2023.07.07
  */
 interface AuthPort {
+    /**
+     * 인가코드 요청
+     *
+     * @return [Mono]<[String]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     fun authorize(): Mono<String>
 
+    /**
+     * idToken 발급
+     *
+     * @param state [String]
+     * @param code [String]
+     * @return [Mono]<[TokenInfo]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     fun token(state: String, code: String): Mono<TokenInfo>
 
+    /**
+     * publicKey 조회
+     *
+     * @return [Mono]<[JwkInfo]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     fun keys(): Mono<JwkInfo>
 
+    /**
+     * idToken 유효성체크
+     *
+     * @param idToken [String]
+     * @return [Mono]<[String]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     fun validate(idToken: String): Mono<String>
+
+    /**
+     * idToken 재발급
+     *
+     * @param refreshToken [String]
+     * @return [Mono]<[TokenInfo]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
+    fun refresh(refreshToken: String): Mono<TokenInfo>
 }
