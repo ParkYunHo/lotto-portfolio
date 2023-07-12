@@ -34,10 +34,10 @@ class StaticsRepository(
      * @since 2023.07.07
      */
     @Transactional(readOnly = true)
-    fun findPeriodStatics(startDt: LocalDate, endDt: LocalDate): Map<Long, Long> {
-        val result = mutableMapOf<Long, Long>()
+    fun findPeriodStatics(startDt: LocalDate, endDt: LocalDate): Map<String, Long> {
+        val result = mutableMapOf<String, Long>()
         for(idx: Long in 1L..45L) {
-            result[idx] = queryFactory
+            result["no$idx"] = queryFactory
                 .select(lottoNumber.drwtNo.count())
                 .from(lottoNumber)
                 .where(
@@ -61,10 +61,10 @@ class StaticsRepository(
      * @since 2023.07.07
      */
     @Transactional(readOnly = true)
-    fun findDrwtNoStatics(startDrwtNo: Long, endDrwtNo: Long): Map<Long, Long> {
-        val result = mutableMapOf<Long, Long>()
+    fun findDrwtNoStatics(startDrwtNo: Long, endDrwtNo: Long): Map<String, Long> {
+        val result = mutableMapOf<String, Long>()
         for(idx: Long in 1L..45L) {
-            result[idx] = queryFactory
+            result["no$idx"] = queryFactory
                 .select(lottoNumber.drwtNo.count())
                 .from(lottoNumber)
                 .where(
@@ -89,8 +89,8 @@ class StaticsRepository(
      * @since 2023.07.07
      */
     @Transactional(readOnly = true)
-    fun findWinAmountStatics(startRank: Long, size: Long, isDesc: Boolean): Map<Long, Long> {
-        val result = mutableMapOf<Long, Long>()
+    fun findWinAmountStatics(startRank: Long, size: Long, isDesc: Boolean): Map<String, Long> {
+        val result = mutableMapOf<String, Long>()
 
         // 1인당 당첨금액 정렬
         val drwtNos = queryFactory
@@ -105,7 +105,7 @@ class StaticsRepository(
             .fetch()
 
         for(idx: Long in 1L..45L) {
-            result[idx] = queryFactory
+            result["no$idx"] = queryFactory
                 .select(lottoNumber.drwtNo.count())
                 .from(lottoNumber)
                 .where(

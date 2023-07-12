@@ -19,32 +19,6 @@ import java.util.concurrent.TimeUnit
 @Configuration
 class CaffeineCacheConfig {
 
-//    @Bean
-//    fun cacheManager(): CacheManager {
-////        val caches = listOf(
-////            CaffeineCache(
-////                "auth-keys",
-////                Caffeine.newBuilder().recordStats()
-////                    .expireAfterWrite(60 * 30, TimeUnit.SECONDS)
-////                    .maximumSize(10000)
-////                    .build()
-////            )
-////        )
-////
-////        val cacheManager = SimpleCacheManager()
-////        cacheManager.setCaches(caches)
-//
-//        val cacheManager = CaffeineCacheManager("baseCache")
-//        cacheManager.setCaffeine(this.caffeineCacheBuilder())
-//        return cacheManager
-//    }
-//
-//    private fun caffeineCacheBuilder(): Caffeine<Any, Any> =
-//        Caffeine.newBuilder()
-//            .initialCapacity(100)
-//            .maximumSize(1000)
-//            .expireAfterWrite(Duration.ofMinutes(10L))
-
     @Bean
     fun cacheManager(): CacheManager {
         val caches = this.caffeineCacheListBuilder()
@@ -63,8 +37,34 @@ class CaffeineCacheConfig {
                 Caffeine.newBuilder().recordStats()
                     .initialCapacity(100)
                     .maximumSize(10000)
-                    .expireAfterWrite(Duration.ofMinutes(30L))
+                    .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
                     .build()
-            )
+            ),
+            // 당첨번호 통계
+            CaffeineCache(
+                "statics.common",
+                Caffeine.newBuilder().recordStats()
+                    .initialCapacity(100)
+                    .maximumSize(10000)
+                    .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
+                    .build()
+            ),
+            // 당첨번호 조회 (특정번호 조회)
+            CaffeineCache(
+                "number.one",
+                Caffeine.newBuilder().recordStats()
+                    .initialCapacity(100)
+                    .maximumSize(10000)
+                    .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
+                    .build()
+            ),
+            CaffeineCache(
+                "number.latest",
+                Caffeine.newBuilder().recordStats()
+                    .initialCapacity(100)
+                    .maximumSize(10000)
+                    .expireAfterWrite(Duration.ofMinutes(10L))      // 10분
+                    .build()
+            ),
         )
 }

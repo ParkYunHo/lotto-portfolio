@@ -1,4 +1,4 @@
-package com.john.lotto.number.adapter.`in`.web
+package com.john.lotto.statics.adapter.`in`.web
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -9,18 +9,19 @@ import org.springframework.web.reactive.function.server.router
 
 /**
  * @author yoonho
- * @since 2023.06.22
+ * @since 2023.07.12
  */
 @Configuration
-class NumberRouter(
-    private val numberHandler: NumberHandler
+class StaticsRouter(
+    private val staticsHandler: StaticsHandler
 ) {
 
     @Bean
-    fun numberRouterFunction(): RouterFunction<ServerResponse> = router {
+    fun staticsRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
-            GET("/api/number", numberHandler::findLottoNumber)
-            GET("/api/number/latest", numberHandler::findLottoNumberLatest)
+            GET("/api/statics/period", staticsHandler::findPeriod)
+            GET("/api/statics/number", staticsHandler::findDrwtNo)
+            GET("/api/statics/rank", staticsHandler::findWinAmount)
         }
     }
 }

@@ -57,7 +57,7 @@ class AuthHandler(
      */
     fun refresh(request: ServerRequest): Mono<ServerResponse> =
         authorizeUseCase.refresh(
-            refreshToken = request.queryParam("refresh_token").orElseThrow { throw BadRequestException("state 정보가 누락되었습니다.") },
+            refreshToken = request.queryParam("refresh_token").orElseThrow { throw BadRequestException("state 정보가 누락되었습니다.") }.trim(),
         )
             .flatMap { BaseResponse().success(it) }
 }

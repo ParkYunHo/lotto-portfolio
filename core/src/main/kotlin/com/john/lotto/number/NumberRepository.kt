@@ -54,6 +54,35 @@ class NumberRepository(
             .fetchFirst()
 
     /**
+     * 최신 로또번호 조회
+     *
+     * @return [LottoNumberDto]?
+     * @author yoonho
+     * @since 2023.07.12
+     */
+    @Transactional(readOnly = true)
+    fun findLottoNumberLatest(): LottoNumberDto? =
+        queryFactory
+            .select(
+                QLottoNumberDto(
+                    lottoNumber.drwtNo,
+                    lottoNumber.drwtDate,
+                    lottoNumber.drwtNo1,
+                    lottoNumber.drwtNo2,
+                    lottoNumber.drwtNo3,
+                    lottoNumber.drwtNo4,
+                    lottoNumber.drwtNo5,
+                    lottoNumber.drwtNo6,
+                    lottoNumber.bnusNo,
+                    lottoNumber.updatedAt,
+                    lottoNumber.createdAt
+                )
+            )
+            .from(lottoNumber)
+            .orderBy(lottoNumber.drwtNo.desc())
+            .fetchFirst()
+
+    /**
      * 마지막 로또회차정보 조회
      *
      * @return [Long]

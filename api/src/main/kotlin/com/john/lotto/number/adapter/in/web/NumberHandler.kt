@@ -20,11 +20,29 @@ class NumberHandler(
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * 특정 로또번호 조회
+     *
+     * @param request [ServerRequest]
+     * @return [Mono]<[ServerResponse]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
     fun findLottoNumber(request: ServerRequest): Mono<ServerResponse> =
         lottoNumberUseCase.findLottoNumber(
-            request.queryParam("drwtNo").orElseThrow { BadRequestException("필수 입력값 누락") }
-                .toLong()
+            request.queryParam("drwtNo").orElseThrow { BadRequestException("필수 입력값 누락") }.toLong()
         )
             .flatMap { BaseResponse().success(it) }
 
+    /**
+     * 최신 로또번호 조회
+     *
+     * @param request [ServerRequest]
+     * @return [Mono]<[ServerResponse]>
+     * @author yoonho
+     * @since 2023.07.12
+     */
+    fun findLottoNumberLatest(request: ServerRequest): Mono<ServerResponse> =
+        lottoNumberUseCase.findLottoNumberLatest()
+            .flatMap { BaseResponse().success(it) }
 }
