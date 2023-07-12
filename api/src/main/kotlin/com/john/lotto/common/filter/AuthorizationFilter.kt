@@ -42,10 +42,13 @@ class AuthorizationFilter(
             val idToken = authorization.substringAfter(TOKEN_PREFIX)
             if(idToken.isNotEmpty()) {
                 // idToken 유효성검증
-                return authPort.validate(idToken)
-                    .flatMap {
-                        exchange.attributes[USER_ID_ATTRIBUTE] = it
-                        chain.filter(exchange)
+                return authPort.keys()
+                    .flatMap { jwtInfo ->
+                        authPort.validate(idToken, jwtInfo)
+                            .flatMap {
+                                exchange.attributes[USER_ID_ATTRIBUTE] = it
+                                chain.filter(exchange)
+                            }
                     }
             }
         }

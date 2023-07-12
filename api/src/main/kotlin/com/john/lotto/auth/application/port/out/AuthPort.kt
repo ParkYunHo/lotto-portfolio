@@ -42,11 +42,12 @@ interface AuthPort {
      * idToken 유효성체크
      *
      * @param idToken [String]
+     * @param jwtInfo [JwkInfo]
      * @return [Mono]<[String]>
      * @author yoonho
      * @since 2023.07.12
      */
-    fun validate(idToken: String): Mono<String>
+    fun validate(idToken: String, jwtInfo: JwkInfo): Mono<String>
 
     /**
      * idToken 재발급

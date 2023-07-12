@@ -7,8 +7,11 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-
     implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
+
+    // Caffeine Cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine")
 
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")

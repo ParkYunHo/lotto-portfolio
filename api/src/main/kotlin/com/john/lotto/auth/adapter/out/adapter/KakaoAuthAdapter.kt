@@ -12,6 +12,7 @@ import com.john.lotto.common.exception.UnAuthorizedException
 import com.john.lotto.common.utils.EnvironmentUtils
 import io.jsonwebtoken.Jwts
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -128,6 +129,7 @@ class KakaoAuthAdapter(
      * @author yoonho
      * @since 2023.07.12
      */
+    @Cacheable(cacheNames = ["auth.keys"])
     override fun keys(): Mono<JwkInfo> {
         try {
             val kauthUrl = EnvironmentUtils.getProperty("auth.api.kauth", "https://kauth.kakao.com")
@@ -136,6 +138,7 @@ class KakaoAuthAdapter(
                 .fromHttpUrl( "$kauthUrl/.well-known/jwks.json")
                 .build(false)
 
+            log.info(" >>> [keys] request - url: ${uriComponents.toUriString()}")
             return defaultWebClient
                 .get()
                 .uri(uriComponents.toUri())
@@ -160,47 +163,44 @@ class KakaoAuthAdapter(
      * @author yoonho
      * @since 2023.07.12
      */
-    override fun validate(idToken: String): Mono<String> =
-        this.keys()
-            .flatMap {
-                try {
-                    val header = this.decode(
-                        idToken.split(".")[0],
-                        JwtTokenInfo.Header::class.java
-                    )
-                    val keyInfo = it.keys.first { key -> key.kid == header.kid }
+    override fun validate(idToken: String, jwtInfo: JwkInfo): Mono<String> {
+        try {
+            val header = this.decode(
+                idToken.split(".")[0],
+                JwtTokenInfo.Header::class.java
+            )
+            val keyInfo = jwtInfo.keys.first { key -> key.kid == header.kid }
 
-                    // 서명검증
-                    val publicKey = this.generatePublicKey(n = keyInfo.n, e = keyInfo.e, kty = keyInfo.kty)
-                    val claims = Jwts.parserBuilder()
-                        .setSigningKey(publicKey)
-                        .build()
-                        .parseClaimsJws(idToken)
-                        .body
+            // 서명검증
+            val publicKey = this.generatePublicKey(n = keyInfo.n, e = keyInfo.e, kty = keyInfo.kty)
+            val claims = Jwts.parserBuilder()
+                .setSigningKey(publicKey)
+                .build()
+                .parseClaimsJws(idToken)
+                .body
 
-                    // 발급기관 체크
-                    if(claims.issuer != EnvironmentUtils.getProperty("auth.url.kauth", "")) {
-                        return@flatMap Mono.error(UnAuthorizedException("유효한 발급인증기관이 아닙니다 - issuer: ${claims.issuer}"))
-                    }
-
-                    // 서비스앱키 체크
-                    if(claims.audience != EnvironmentUtils.getProperty("auth.key.client-id", "")) {
-                        return@flatMap Mono.error(UnAuthorizedException("유효한 서비스앱키가 아닙니다 - audience: ${claims.audience}"))
-                    }
-
-                    // 만료시간 체크
-                    if(claims.expiration.before(Date())) {
-                        return@flatMap Mono.error(UnAuthorizedException("유효한 ID토큰이 아닙니다 - expiration: ${claims.expiration}"))
-                    }
-
-                    Mono.just(claims.subject)
-                } catch (uae: UnAuthorizedException) {
-                    return@flatMap Mono.error(uae)
-                } catch (e: Exception) {
-                    return@flatMap Mono.error(UnAuthorizedException("유효한 서명이 아닙니다"))
-                }
+            // 발급기관 체크
+            if(claims.issuer != EnvironmentUtils.getProperty("auth.url.kauth", "")) {
+                return Mono.error(UnAuthorizedException("유효한 발급인증기관이 아닙니다 - issuer: ${claims.issuer}"))
             }
 
+            // 서비스앱키 체크
+            if(claims.audience != EnvironmentUtils.getProperty("auth.key.client-id", "")) {
+                return Mono.error(UnAuthorizedException("유효한 서비스앱키가 아닙니다 - audience: ${claims.audience}"))
+            }
+
+            // 만료시간 체크
+            if(claims.expiration.before(Date())) {
+                return Mono.error(UnAuthorizedException("유효한 ID토큰이 아닙니다 - expiration: ${claims.expiration}"))
+            }
+
+            return Mono.just(claims.subject)
+        } catch (uae: UnAuthorizedException) {
+            return Mono.error(uae)
+        } catch (e: Exception) {
+            return Mono.error(UnAuthorizedException("유효한 서명이 아닙니다"))
+        }
+    }
 
 //    // JWT토큰을 직접 파싱하여 처리하는 방식
 //    override fun validate(idToken: String): Mono<String> =
