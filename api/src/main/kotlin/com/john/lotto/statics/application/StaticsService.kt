@@ -3,6 +3,7 @@ package com.john.lotto.statics.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
+import com.john.lotto.common.utils.ObjectMapperUtils
 import com.john.lotto.statics.StaticsRepository
 import com.john.lotto.statics.application.port.`in`.StaticsPeriodUseCase
 import com.john.lotto.statics.dto.StaticsDto
@@ -45,7 +46,7 @@ class StaticsService(
             val result = staticsRepository.findPeriodStatics(startDt = startDt, endDt = endDt)
 
             log.info(" >>> [findPeriod] result: $result")
-            Mono.just(this.decode(source = result, classType = StaticsDto::class.java))
+            Mono.just(ObjectMapperUtils.decode(source = result, classType = StaticsDto::class.java))
         }catch (e: Exception) {
             log.error(" >>> [findPeriod] Exception occurs - message: ${e.message}")
             Mono.error(InternalServerException("월별/연도별 당첨번호 조회에 실패하였습니다."))
@@ -67,7 +68,7 @@ class StaticsService(
             val result = staticsRepository.findDrwtNoStatics(startDrwtNo = startDrwtNo.toLong(), endDrwtNo = endDrwtNo.toLong())
 
             log.info(" >>> [findDrwtNo] result: $result")
-            Mono.just(this.decode(source = result, classType = StaticsDto::class.java))
+            Mono.just(ObjectMapperUtils.decode(source = result, classType = StaticsDto::class.java))
         }catch (e: Exception) {
             log.error(" >>> [findDrwtNo] Exception occurs - message: ${e.message}")
             Mono.error(InternalServerException("회차별 당첨번호 조회에 실패하였습니다."))
@@ -94,21 +95,9 @@ class StaticsService(
             val result = staticsRepository.findWinAmountStatics(startRank = startRank.toLong(), size = size.toLong(), isDesc = checkDesc)
 
             log.info(" >>> [findWinAmount] result: $result")
-            Mono.just(this.decode(source = result, classType = StaticsDto::class.java))
+            Mono.just(ObjectMapperUtils.decode(source = result, classType = StaticsDto::class.java))
         }catch (e: Exception) {
             log.error(" >>> [findWinAmount] Exception occurs - message: ${e.message}")
             Mono.error(InternalServerException("당첨금액별 당첨번호 조회에 실패하였습니다."))
         }
-
-    /**
-     * 오브젝트 매핑
-     *
-     * @param source [Map]<[String], [Long]>
-     * @param classType [Class]<[T]>
-     * @return T
-     * @author yoonho
-     * @since 2023.07.12
-     */
-    private fun <T> decode(source: Map<String, Long>, classType: Class<T>): T =
-        objectMapper.convertValue(source, classType)
 }

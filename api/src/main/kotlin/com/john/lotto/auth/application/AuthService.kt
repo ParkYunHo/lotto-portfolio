@@ -3,6 +3,8 @@ package com.john.lotto.auth.application
 import com.john.lotto.auth.application.dto.ResultTokenInfo
 import com.john.lotto.auth.application.port.`in`.AuthorizeUseCase
 import com.john.lotto.auth.application.port.out.AuthPort
+import com.john.lotto.common.dto.JwtTokenInfo
+import com.john.lotto.common.utils.ObjectMapperUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -39,10 +41,16 @@ class AuthService(
     override fun token(state: String, code: String): Mono<ResultTokenInfo> =
         authPort.token(state, code)
             .flatMap {
+                val nickname = ObjectMapperUtils.decode(
+                    it.idToken.split(".")[1],
+                    JwtTokenInfo.Payload::class.java
+                ).nickname
+
                 Mono.just(
                     ResultTokenInfo(
                         idToken = it.idToken,
-                        refreshToken = it.refreshToken
+                        refreshToken = it.refreshToken,
+                        nickname = nickname
                     )
                 )
             }
@@ -58,10 +66,16 @@ class AuthService(
     override fun refresh(refreshToken: String): Mono<ResultTokenInfo> =
         authPort.refresh(refreshToken = refreshToken)
             .flatMap {
+                val nickname = ObjectMapperUtils.decode(
+                    it.idToken.split(".")[1],
+                    JwtTokenInfo.Payload::class.java
+                ).nickname
+
                 Mono.just(
                     ResultTokenInfo(
                         idToken = it.idToken,
-                        refreshToken = it.refreshToken
+                        refreshToken = it.refreshToken,
+                        nickname = nickname
                     )
                 )
             }

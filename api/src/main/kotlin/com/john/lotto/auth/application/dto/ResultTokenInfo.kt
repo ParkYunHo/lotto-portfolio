@@ -10,5 +10,7 @@ data class ResultTokenInfo(
     @field:JsonProperty("id_token")
     val idToken: String,
     @field:JsonProperty("refresh_token")
-    val refreshToken: String? = ""
+    val refreshToken: String? = "",
+    @field:JsonProperty("nickname")
+    val nickname: String? = ""
 )

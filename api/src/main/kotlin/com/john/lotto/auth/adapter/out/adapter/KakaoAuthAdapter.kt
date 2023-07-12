@@ -10,6 +10,7 @@ import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.common.exception.UnAuthorizedException
 import com.john.lotto.common.utils.EnvironmentUtils
+import com.john.lotto.common.utils.ObjectMapperUtils
 import io.jsonwebtoken.Jwts
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
@@ -165,7 +166,7 @@ class KakaoAuthAdapter(
      */
     override fun validate(idToken: String, jwtInfo: JwkInfo): Mono<String> {
         try {
-            val header = this.decode(
+            val header = ObjectMapperUtils.decode(
                 idToken.split(".")[0],
                 JwtTokenInfo.Header::class.java
             )
@@ -198,6 +199,7 @@ class KakaoAuthAdapter(
         } catch (uae: UnAuthorizedException) {
             return Mono.error(uae)
         } catch (e: Exception) {
+            log.error(" >>> [validate] Exception occurs - message: ${e.message}")
             return Mono.error(UnAuthorizedException("유효한 서명이 아닙니다"))
         }
     }
@@ -296,21 +298,6 @@ class KakaoAuthAdapter(
             throw e
         }
     }
-
-    /**
-     * 오브젝트 매핑
-     *
-     * @param sourceText [String]
-     * @param classType [Class]<[T]>
-     * @return T
-     * @author yoonho
-     * @since 2023.07.12
-     */
-    private fun <T> decode(sourceText: String, classType: Class<T>): T =
-        objectMapper.readValue(
-            String(Base64.getUrlDecoder().decode(sourceText)),
-            classType
-        )
 
     /**
      * PublicKey 생성
