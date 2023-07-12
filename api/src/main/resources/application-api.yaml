@@ -6,3 +6,8 @@ auth:
     connect-timeout: 3000
     read-timeout: 2000
     user-agent: lotto-portfolio
+
+springdoc:
+  default-consumes-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html

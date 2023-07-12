@@ -2,7 +2,6 @@ package com.john.lotto.number.dto
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.querydsl.core.annotations.QueryProjection
-import lombok.ToString
 import java.time.LocalDate
 import java.time.LocalDateTime
 

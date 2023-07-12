@@ -31,8 +31,10 @@ class AuthorizationFilter(
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         // WhiteList에 포함된 경로인 경우, 인증로직을 수행하지 않음
         val path = exchange.request.path.pathWithinApplication().value()
-        if(whiteList.contains(path)) {
-            return chain.filter(exchange)
+        whiteList.forEach {
+            if(Regex("$it*") in path) {
+                return chain.filter(exchange)
+            }
         }
 
         val authorization = exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)

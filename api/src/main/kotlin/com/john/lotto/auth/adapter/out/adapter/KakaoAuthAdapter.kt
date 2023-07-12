@@ -11,6 +11,7 @@ import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.common.exception.UnAuthorizedException
 import com.john.lotto.common.utils.EnvironmentUtils
 import com.john.lotto.common.utils.ObjectMapperUtils
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
@@ -198,6 +199,8 @@ class KakaoAuthAdapter(
             return Mono.just(claims.subject)
         } catch (uae: UnAuthorizedException) {
             return Mono.error(uae)
+        } catch (ejx: ExpiredJwtException) {
+            return Mono.error(UnAuthorizedException("만료시간이 지난 토큰입니다"))
         } catch (e: Exception) {
             log.error(" >>> [validate] Exception occurs - message: ${e.message}")
             return Mono.error(UnAuthorizedException("유효한 서명이 아닙니다"))
