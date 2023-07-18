@@ -104,7 +104,7 @@ class NumberRepository(
      * @author yoonho
      * @since 2023.06.28
      */
-    @Transactional
+//    @Transactional
     fun insertLottoNumber(input: LottoNumberDto): Long =
         queryFactory
             .insert(lottoNumber)

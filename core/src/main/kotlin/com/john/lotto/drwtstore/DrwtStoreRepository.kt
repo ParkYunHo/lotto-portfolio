@@ -1,6 +1,7 @@
 package com.john.lotto.drwtstore
 
 import com.john.lotto.drwtstore.dto.DrwtStoreDto
+import com.john.lotto.drwtstore.dto.QDrwtStoreDto
 import com.john.lotto.entity.QLottoDrwtStore
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.slf4j.LoggerFactory
@@ -21,6 +22,14 @@ class DrwtStoreRepository(
 
     private val lottoDrwtStore = QLottoDrwtStore.lottoDrwtStore!!
 
+    /**
+     * 당첨판매점 저장
+     *
+     * @param input [DrwtStoreDto]
+     * @return [Long]
+     * @author yoonho
+     * @since 2023.07.18
+     */
     @Transactional
     fun insertLottoDrwtStore(input: DrwtStoreDto): Long =
         queryFactory
@@ -48,4 +57,34 @@ class DrwtStoreRepository(
                 input.createdAt
             )
             .execute()
+
+    /**
+     * 당첨판매점 조회
+     *
+     * @param ids [List]<[String]>
+     * @return [List]<[DrwtStoreDto]>
+     * @author yoonho
+     * @since 2023.07.18
+     */
+    @Transactional(readOnly = true)
+    fun findLottoDrwtStore(ids: List<String>): List<DrwtStoreDto> =
+        queryFactory
+            .select(
+                QDrwtStoreDto(
+                    lottoDrwtStore.drwtNo,
+                    lottoDrwtStore.drwtOrder,
+                    lottoDrwtStore.drwtRank,
+                    lottoDrwtStore.rtlrid,
+                    lottoDrwtStore.firmnm,
+                    lottoDrwtStore.bplcdorodtladres,
+                    lottoDrwtStore.drwtType,
+                    lottoDrwtStore.updatedAt,
+                    lottoDrwtStore.createdAt
+                )
+            )
+            .from(lottoDrwtStore)
+            .where(
+                lottoDrwtStore.rtlrid.`in`(ids)
+            )
+            .fetch()
 }

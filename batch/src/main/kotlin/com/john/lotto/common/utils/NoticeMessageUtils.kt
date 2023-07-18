@@ -11,18 +11,20 @@ class NoticeMessageUtils {
     companion object {
         val NOTICE_USER_NAME = "Lotto Batch Notification"
         var MESSAGE_TEMPLATE = "\uFE0F\uD83C\uDF1F로또배치 실행 {status}!\uD83C\uDF1F\n\n" +
-                "- Step : {step}\n" +
-                "- 메세지 : {message}\n" +
-                "- url: {url}"
+                " > Job : {job}\n" +
+                " > Step : {step}\n" +
+                " > Message : {message}"
 
-        fun setSuccessMessage(jobExecutionContext: ExecutionContext, step: String) {
+        fun setSuccessMessage(jobExecutionContext: ExecutionContext, job: String, step: String) {
             jobExecutionContext.put("message", "SUCCESS")
+            jobExecutionContext.put("job", job)
             jobExecutionContext.put("step", step)
             jobExecutionContext.put("status", "성공")
         }
 
-        fun setFailMessage(jobExecutionContext: ExecutionContext, step: String, message: String) {
+        fun setFailMessage(jobExecutionContext: ExecutionContext, job: String, step: String, message: String) {
             jobExecutionContext.put("message", message)
+            jobExecutionContext.put("job", job)
             jobExecutionContext.put("step", step)
             jobExecutionContext.put("status", "실패")
         }

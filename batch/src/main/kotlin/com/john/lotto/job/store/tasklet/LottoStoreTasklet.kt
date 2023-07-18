@@ -109,7 +109,8 @@ class LottoStoreTasklet(
             log.error(" >>> [store] Exception occurs - message: ${e.message}")
             NoticeMessageUtils.setFailMessage(
                 jobExecutionContext = jobExecutionContext!!,
-                step = "lottoStoreStep",
+                job = stepContext.jobName,
+                step = stepContext.stepName,
                 message = e.message ?: "[store] Exception occurs"
             )
             contribution.exitStatus = ExitStatus.FAILED
@@ -119,7 +120,8 @@ class LottoStoreTasklet(
         log.info(" >>> [store] BATCH END ########")
         NoticeMessageUtils.setSuccessMessage(
             jobExecutionContext = jobExecutionContext!!,
-            step = "lottoStoreStep"
+            job = stepContext.jobName,
+            step = stepContext.stepName
         )
         return RepeatStatus.FINISHED
     }

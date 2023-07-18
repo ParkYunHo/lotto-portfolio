@@ -20,6 +20,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.item.ExecutionContext
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -44,6 +45,7 @@ class LottoNumberTasklet(
         this.jobExecutionContext = jobExecution.executionContext
     }
 
+    @Transactional
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         log.info(" >>> [number] BATCH START ########")
         val stepContext = chunkContext.stepContext
@@ -62,7 +64,8 @@ class LottoNumberTasklet(
                 if(!isSuccess) {
                     NoticeMessageUtils.setFailMessage(
                         jobExecutionContext = jobExecutionContext!!,
-                        step = "lottoNumberStep",
+                        job = stepContext.jobName,
+                        step = stepContext.stepName,
                         message = "[number] fail insert LottoInfo - drwtNo: $lastDrwtNo"
                     )
                     contribution.exitStatus = ExitStatus.FAILED
@@ -72,7 +75,8 @@ class LottoNumberTasklet(
                 log.error(" >>> [number] Exception occurs - message: ${e.message}")
                 NoticeMessageUtils.setFailMessage(
                     jobExecutionContext = jobExecutionContext!!,
-                    step = "lottoNumberStep",
+                    job = stepContext.jobName,
+                    step = stepContext.stepName,
                     message = e.message ?: "[number] Exception occurs"
                 )
                 contribution.exitStatus = ExitStatus.FAILED
@@ -87,7 +91,8 @@ class LottoNumberTasklet(
                     log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam")
                     NoticeMessageUtils.setFailMessage(
                         jobExecutionContext = jobExecutionContext!!,
-                        step = "lottoNumberStep",
+                        job = stepContext.jobName,
+                        step = stepContext.stepName,
                         message = "[number][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam"
                     )
                     contribution.exitStatus = ExitStatus.FAILED
@@ -102,7 +107,8 @@ class LottoNumberTasklet(
                     log.warn(" >>> [number][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
                     NoticeMessageUtils.setFailMessage(
                         jobExecutionContext = jobExecutionContext!!,
-                        step = "lottoNumberStep",
+                        job = stepContext.jobName,
+                        step = stepContext.stepName,
                         message = "[number][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
                     )
                     contribution.exitStatus = ExitStatus.FAILED
@@ -113,7 +119,8 @@ class LottoNumberTasklet(
                     if(!isSuccess) {
                         NoticeMessageUtils.setFailMessage(
                             jobExecutionContext = jobExecutionContext!!,
-                            step = "lottoNumberStep",
+                            job = stepContext.jobName,
+                            step = stepContext.stepName,
                             message = "[number][manual] fail insert LottoInfo - currentDrwtNo: $endDrwtNo"
                         )
                         contribution.exitStatus = ExitStatus.FAILED
@@ -126,7 +133,8 @@ class LottoNumberTasklet(
                         if(!isSuccess) {
                             NoticeMessageUtils.setFailMessage(
                                 jobExecutionContext = jobExecutionContext!!,
-                                step = "lottoNumberStep",
+                                job = stepContext.jobName,
+                                step = stepContext.stepName,
                                 message = "[number][manual] fail insert LottoInfo - currentDrwtNo: $drwtNo, startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
                             )
                             contribution.exitStatus = ExitStatus.FAILED
@@ -138,7 +146,8 @@ class LottoNumberTasklet(
                 log.error(" >>> [number][manual] Exception occurs - message: ${e.message}")
                 NoticeMessageUtils.setFailMessage(
                     jobExecutionContext = jobExecutionContext!!,
-                    step = "lottoNumberStep",
+                    job = stepContext.jobName,
+                    step = stepContext.stepName,
                     message = e.message ?: "[number][manual] Exception occurs"
                 )
                 contribution.exitStatus = ExitStatus.FAILED
@@ -150,7 +159,8 @@ class LottoNumberTasklet(
         log.info(" >>> [number] BATCH END ########")
         NoticeMessageUtils.setSuccessMessage(
             jobExecutionContext = jobExecutionContext!!,
-            step = "lottoNumberStep"
+            job = stepContext.jobName,
+            step = stepContext.stepName
         )
         return RepeatStatus.FINISHED
     }
@@ -163,7 +173,6 @@ class LottoNumberTasklet(
      * @author yoonho
      * @since 2023.06.29
      */
-    @Transactional
     fun insertLottoInfo(drwtNo: String): Boolean {
         try {
             // 로또 당첨정보 조회 (by, 로또API)

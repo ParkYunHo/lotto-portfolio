@@ -53,7 +53,8 @@ class LottoDrwtStoreTasklet(
                     log.error(" >>> [drwtStore] Fail Crawling DrwtStore")
                     NoticeMessageUtils.setFailMessage(
                         jobExecutionContext = jobExecutionContext!!,
-                        step = "lottoDrwtStoreStep",
+                        job = stepContext.jobName,
+                        step = stepContext.stepName,
                         message = "[drwtStore] Fail Crawling DrwtStore"
                     )
                     contribution.exitStatus = ExitStatus.FAILED
@@ -68,7 +69,8 @@ class LottoDrwtStoreTasklet(
                 log.error(" >>> [drwtStore] Exception occurs - message: ${e.message}")
                 NoticeMessageUtils.setFailMessage(
                     jobExecutionContext = jobExecutionContext!!,
-                    step = "lottoDrwtStoreStep",
+                    job = stepContext.jobName,
+                    step = stepContext.stepName,
                     message = e.message ?: "[drwtStore] Exception occurs"
                 )
                 contribution.exitStatus = ExitStatus.FAILED
@@ -83,7 +85,8 @@ class LottoDrwtStoreTasklet(
                     log.warn(" >>> [drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam")
                     NoticeMessageUtils.setFailMessage(
                         jobExecutionContext = jobExecutionContext!!,
-                        step = "lottoDrwtStoreStep",
+                        job = stepContext.jobName,
+                        step = stepContext.stepName,
                         message = "[drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNoParam, endDrwtNo: $endDrwtNoParam"
                     )
                     contribution.exitStatus = ExitStatus.FAILED
@@ -98,7 +101,8 @@ class LottoDrwtStoreTasklet(
                     log.warn(" >>> [drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo")
                     NoticeMessageUtils.setFailMessage(
                         jobExecutionContext = jobExecutionContext!!,
-                        step = "lottoDrwtStoreStep",
+                        job = stepContext.jobName,
+                        step = stepContext.stepName,
                         message = "[drwtStore][manual] invalid parameter - startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
                     )
                     contribution.exitStatus = ExitStatus.FAILED
@@ -111,7 +115,8 @@ class LottoDrwtStoreTasklet(
                         log.error(" >>> [drwtStore][manual] Fail Crawling DrwtStore")
                         NoticeMessageUtils.setFailMessage(
                             jobExecutionContext = jobExecutionContext!!,
-                            step = "lottoDrwtStoreStep",
+                            job = stepContext.jobName,
+                            step = stepContext.stepName,
                             message = "[drwtStore][manual] Fail Crawling DrwtStore - currentDrwtNo: $endDrwtNo"
                         )
                         contribution.exitStatus = ExitStatus.FAILED
@@ -131,7 +136,8 @@ class LottoDrwtStoreTasklet(
                             log.error(" >>> [drwtStore][manual] Fail Crawling DrwtStore")
                             NoticeMessageUtils.setFailMessage(
                                 jobExecutionContext = jobExecutionContext!!,
-                                step = "lottoDrwtStoreStep",
+                                job = stepContext.jobName,
+                                step = stepContext.stepName,
                                 message = "[drwtStore][manual] Fail Crawling DrwtStore - currentDrwtNo: $endDrwtNo, startDrwtNo: $startDrwtNo, endDrwtNo: $endDrwtNo"
                             )
                             contribution.exitStatus = ExitStatus.FAILED
@@ -148,7 +154,8 @@ class LottoDrwtStoreTasklet(
                 log.error(" >>> [drwtStore][manual] Exception occurs - message: ${e.message}")
                 NoticeMessageUtils.setFailMessage(
                     jobExecutionContext = jobExecutionContext!!,
-                    step = "lottoDrwtStoreStep",
+                    job = stepContext.jobName,
+                    step = stepContext.stepName,
                     message = e.message ?: "[drwtStore][manual] Exception occurs"
                 )
                 contribution.exitStatus = ExitStatus.FAILED
@@ -160,7 +167,8 @@ class LottoDrwtStoreTasklet(
         log.info(" >>> [drwtStore] BATCH END ########")
         NoticeMessageUtils.setSuccessMessage(
             jobExecutionContext = jobExecutionContext!!,
-            step = "lottoDrwtStoreStep"
+            job = stepContext.jobName,
+            step = stepContext.stepName
         )
         return RepeatStatus.FINISHED
     }

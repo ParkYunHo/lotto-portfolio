@@ -25,6 +25,9 @@ class LottoNumberBatchJob (
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    // TODO:
+    //  - 실패시에도 알림가도록 설정
+
     @Bean
     fun lottoNumberJob(jobRepository: JobRepository, transactionManager: JpaTransactionManager): Job =
         JobBuilder("lottoNumberJob", jobRepository)

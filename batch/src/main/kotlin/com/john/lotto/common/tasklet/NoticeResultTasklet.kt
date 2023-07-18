@@ -31,12 +31,14 @@ class NoticeResultTasklet(
         val jobExecutionContext = jobExecution.executionContext
 
         val status = jobExecutionContext.get("status")?.toString() ?: ""
+        val job = jobExecutionContext.get("job")?.toString() ?: ""
         val step = jobExecutionContext.get("step")?.toString() ?: ""
         val message = jobExecutionContext.get("message")?.toString() ?: ""
 
         noticeMessage = NoticeMessageUtils.MESSAGE_TEMPLATE
             .replace("{status}", status)
             .replace("{step}", step)
+            .replace("{job}", job)
             .replace("{message}", message)
     }
 

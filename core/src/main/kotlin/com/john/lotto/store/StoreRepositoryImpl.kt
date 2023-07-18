@@ -1,7 +1,10 @@
 package com.john.lotto.store
 
 import com.john.lotto.entity.QLottoStore
+import com.john.lotto.store.dto.LocationDto
 import com.john.lotto.store.dto.LottoStoreDto
+import com.john.lotto.store.dto.QLocationDto
+import com.john.lotto.store.dto.QLottoStoreDto
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -78,4 +81,63 @@ class StoreRepositoryImpl(
             queryFactory
                     .delete(lottoStore)
                     .execute()
+
+    /**
+     * 로또 판매점 조회
+     *
+     * @param location [String]
+     * @param subLocation [String]
+     * @return [List]<[LottoStoreDto]>
+     * @author yoonho
+     * @since 2023.07.18
+     */
+    @Transactional(readOnly = true)
+    fun findLottoStore(location: String, subLocation: String): List<LottoStoreDto> =
+        queryFactory
+            .select(
+                QLottoStoreDto(
+                    lottoStore.rtlrid,
+                    lottoStore.latitude,
+                    lottoStore.longitude,
+                    lottoStore.bplclocplc1,
+                    lottoStore.bplclocplc2,
+                    lottoStore.bplclocplc3,
+                    lottoStore.bplclocplc4,
+                    lottoStore.bplcdorodtladres,
+                    lottoStore.bplclocplcdtladres,
+                    lottoStore.rtlrstrtelno,
+                    lottoStore.firmnm,
+                    lottoStore.updatedAt,
+                    lottoStore.createdAt
+                )
+            )
+            .from(lottoStore)
+            .where(
+                lottoStore.bplclocplc1.like(location),
+                lottoStore.bplclocplc2.like(subLocation)
+            )
+            .fetch()
+
+    /**
+     * 판매점 위치정보 조회
+     *
+     * @return [List]<[LocationDto]>
+     * @author yoonho
+     * @since 2023.07.18
+     */
+    @Transactional(readOnly = true)
+    fun findLocation(): List<LocationDto> =
+        queryFactory
+            .select(
+                QLocationDto(
+                    lottoStore.bplclocplc1,
+                    lottoStore.bplclocplc2,
+                )
+            )
+            .from(lottoStore)
+            .groupBy(
+                lottoStore.bplclocplc1,
+                lottoStore.bplclocplc2
+            )
+            .fetch()
 }
