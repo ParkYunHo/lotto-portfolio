@@ -1,8 +1,10 @@
 package com.john.lotto.number.application
 
+import com.john.lotto.amount.AmountRepository
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.number.NumberRepository
+import com.john.lotto.number.application.dto.LottoTotalInfo
 import com.john.lotto.number.application.port.`in`.FindLottoNumberUseCase
 import com.john.lotto.number.dto.LottoNumberDto
 import org.slf4j.LoggerFactory
@@ -16,7 +18,8 @@ import reactor.core.publisher.Mono
  */
 @Service
 class NumberService(
-    private val numberRepository: NumberRepository
+    private val numberRepository: NumberRepository,
+    private val amountRepository: AmountRepository
 ): FindLottoNumberUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -24,14 +27,31 @@ class NumberService(
      * 특정 로또번호 조회
      *
      * @param drwtNo [Long]
-     * @return [Mono]<[LottoNumberDto]>
+     * @return [Mono]<[LottoTotalInfo]>
      * @author yoonho
      * @since 2023.07.12
      */
     @Cacheable(cacheNames = ["number.one"], key = "#drwtNo", unless = "#result == null")
-    override fun findLottoNumber(drwtNo: Long): Mono<LottoNumberDto> {
-        val result = numberRepository.findLottoNumber(drwtNo = drwtNo) ?: throw BadRequestException("로또번호가 존재하지 않습니다.")
+    override fun findLottoNumber(drwtNo: Long): Mono<LottoTotalInfo> {
+        val lottoNumber = numberRepository.findLottoNumber(drwtNo = drwtNo) ?: throw BadRequestException("로또번호가 존재하지 않습니다.")
+        val lottoWinAmount = amountRepository.findLottoWinAmount(drwtNo = drwtNo) ?: throw BadRequestException("로또번호가 존재하지 않습니다.")
 
+        val result = LottoTotalInfo(
+            drwtNo = lottoNumber.drwtNo,
+            drwtDate = lottoNumber.drwtDate,
+            drwtNo1 = lottoNumber.drwtNo1,
+            drwtNo2 = lottoNumber.drwtNo2,
+            drwtNo3 = lottoNumber.drwtNo3,
+            drwtNo4 = lottoNumber.drwtNo4,
+            drwtNo5 = lottoNumber.drwtNo5,
+            drwtNo6 = lottoNumber.drwtNo6,
+            bnusNo = lottoNumber.bnusNo,
+
+            totSellamnt = lottoWinAmount.totSellamnt,
+            firstWinamnt = lottoWinAmount.firstWinamnt,
+            firstPrzwnerCo = lottoWinAmount.firstPrzwnerCo,
+            firstAccumamnt = lottoWinAmount.firstAccumamnt,
+        )
         log.info(" >>> [findLottoNumber] drwtNo: $drwtNo, result: $result")
         return Mono.just(result)
     }
@@ -40,14 +60,31 @@ class NumberService(
     /**
      * 최신 로또번호 조회
      *
-     * @return [Mono]<[LottoNumberDto]>
+     * @return [Mono]<[LottoTotalInfo]>
      * @author yoonho
      * @since 2023.07.12
      */
     @Cacheable(cacheNames = ["number.latest"], unless = "#result == null")
-    override fun findLottoNumberLatest(): Mono<LottoNumberDto> {
-        val result = numberRepository.findLottoNumberLatest() ?: throw InternalServerException("데이터 조회에 실패하였습니다.")
+    override fun findLottoNumberLatest(): Mono<LottoTotalInfo> {
+        val lottoNumber = numberRepository.findLottoNumberLatest() ?: throw InternalServerException("데이터 조회에 실패하였습니다.")
+        val lottoWinAmount = amountRepository.findLottoWinAmount(drwtNo = lottoNumber.drwtNo!!) ?: throw BadRequestException("데이터 조회에 실패하였습니다.")
 
+        val result = LottoTotalInfo(
+            drwtNo = lottoNumber.drwtNo,
+            drwtDate = lottoNumber.drwtDate,
+            drwtNo1 = lottoNumber.drwtNo1,
+            drwtNo2 = lottoNumber.drwtNo2,
+            drwtNo3 = lottoNumber.drwtNo3,
+            drwtNo4 = lottoNumber.drwtNo4,
+            drwtNo5 = lottoNumber.drwtNo5,
+            drwtNo6 = lottoNumber.drwtNo6,
+            bnusNo = lottoNumber.bnusNo,
+
+            totSellamnt = lottoWinAmount.totSellamnt,
+            firstWinamnt = lottoWinAmount.firstWinamnt,
+            firstPrzwnerCo = lottoWinAmount.firstPrzwnerCo,
+            firstAccumamnt = lottoWinAmount.firstAccumamnt,
+        )
         log.info(" >>> [findLottoNumberLatest] result: $result")
         return Mono.just(result)
     }

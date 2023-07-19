@@ -1,5 +1,6 @@
 package com.john.lotto.number.adapter.`in`.web
 
+import com.john.lotto.number.application.dto.LottoTotalInfo
 import com.john.lotto.number.dto.LottoNumberDto
 import com.john.lotto.statics.dto.StaticsDto
 import io.swagger.v3.oas.annotations.Operation
@@ -52,9 +53,9 @@ class NumberRouter(
                     ],
                     responses = [
                         ApiResponse(
-                            description = "당첨번호",
+                            description = "로또 당첨정보",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = LottoNumberDto::class))]
+                            content = [Content(schema = Schema(implementation = LottoTotalInfo::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]
@@ -71,9 +72,9 @@ class NumberRouter(
                     operationId = "findLottoNumberLatest",
                     responses = [
                         ApiResponse(
-                            description = "당첨번호",
+                            description = "로또 당첨정보",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = LottoNumberDto::class))]
+                            content = [Content(schema = Schema(implementation = LottoTotalInfo::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]
