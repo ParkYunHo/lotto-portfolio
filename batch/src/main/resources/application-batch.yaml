@@ -3,9 +3,6 @@ spring:
     job:
       enabled: true
       name: ${job.name}
-  config:
-    activate:
-      on-profile: default
   cloud:
     openfeign:
       client:

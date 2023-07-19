@@ -32,12 +32,12 @@ jobs:
       - name: Build Gradle with JIB (API)
         run: ./gradlew clean --stacktrace -PtagName=$GITHUB_REF_NAME --build-file=./api/build.gradle.kts -Djib.console=plain -Djib.useOnlyProjectCache=true jib
 
-      - name: Execute Remote SSH & Deploy 'API' module
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_SSH_HOST }}
-          username: ${{ secrets.REMOTE_SSH_USERNAME }}
-          key: ${{ secrets.REMOTE_SSH_KEY }}
-          script: |
-            docker pull johnpark0921/lotto-portfolio
-            docker container run --name lotto-portfolio -p 8080:8080 johnpark0921/lotto-portfolio
+#      - name: Execute Remote SSH & Deploy 'API' module
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.REMOTE_SSH_HOST }}
+#          username: ${{ secrets.REMOTE_SSH_USERNAME }}
+#          key: ${{ secrets.REMOTE_SSH_KEY }}
+#          script: |
+#            docker pull johnpark0921/lotto-portfolio
+#            docker container run --name lotto-portfolio -p 8080:8080 johnpark0921/lotto-portfolio

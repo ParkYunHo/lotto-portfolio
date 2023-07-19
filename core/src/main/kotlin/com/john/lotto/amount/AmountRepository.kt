@@ -3,6 +3,7 @@ package com.john.lotto.amount
 import com.john.lotto.amount.dto.LottoWinAmountDto
 import com.john.lotto.amount.dto.QLottoWinAmountDto
 import com.john.lotto.entity.QLottoWinAmount
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Repository
@@ -49,6 +50,39 @@ class AmountRepository(
                 lottoWinAmount.drwtNo.eq(drwtNo)
             )
             .fetchFirst()
+
+    /**
+     * 로또당첨금 조회
+     *
+     * @param drwtNos [List]<[Long]>
+     * @return [List]<[LottoWinAmountDto]>
+     * @author yoonho
+     * @since 2023.07.19
+     */
+    @Transactional(readOnly = true)
+    fun findLottoWinAmountList(drwtNos: List<Long>): List<LottoWinAmountDto> =
+        queryFactory
+            .select(
+                QLottoWinAmountDto(
+                    lottoWinAmount.drwtNo,
+                    lottoWinAmount.drwtDate,
+                    lottoWinAmount.totSellamnt,
+                    lottoWinAmount.firstWinamnt,
+                    lottoWinAmount.firstPrzwnerCo,
+                    lottoWinAmount.firstAccumamnt,
+                    lottoWinAmount.updatedAt,
+                    lottoWinAmount.createdAt
+                )
+            )
+            .from(lottoWinAmount)
+            .where(
+                this.inLottoWinAmountDrwtNos(drwtNos = drwtNos)
+            )
+            .fetch()
+
+    private fun inLottoWinAmountDrwtNos(drwtNos: List<Long>): BooleanExpression? =
+        if(drwtNos.isEmpty()) null
+        else lottoWinAmount.drwtNo.`in`(drwtNos)
 
     /**
      * 로또 당첨금 저장

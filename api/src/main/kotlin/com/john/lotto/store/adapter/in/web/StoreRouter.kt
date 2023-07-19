@@ -75,6 +75,26 @@ class StoreRouter(
                             examples = [
                                 ExampleObject(name = "서초구", value = "서초구", description = "조회할 판매점 위치(구)")
                             ]
+                        ),
+                        Parameter(
+                            name = "sort",
+                            description = "정렬",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "판매점이름", value = "0", description = "판매점이름 오름차순"),
+                                ExampleObject(name = "1등당첨금액", value = "1", description = "1등당첨금액"),
+                                ExampleObject(name = "최신회차 당첨", value = "2", description = "최신회차 당첨")
+                            ]
+                        ),
+                        Parameter(
+                            name = "option",
+                            description = "노출판매점 옵션(전체, 명당, 판매점)",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "전체", value = "0", description = "명당과 판매점 모두 조회"),
+                                ExampleObject(name = "명당", value = "1", description = "명당만 조회"),
+                                ExampleObject(name = "판매점", value = "2", description = "명당이 제외된 판매점 조회")
+                            ]
                         )
                     ],
                     responses = [

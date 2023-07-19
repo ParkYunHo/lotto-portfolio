@@ -12,7 +12,7 @@ import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 
-
+private const val DEV_PREFIX = "DEV_LOTTO_FOLIO"
 private const val TOKEN_PREFIX = "Bearer "
 private const val USER_ID_ATTRIBUTE = "userId"
 
@@ -39,6 +39,11 @@ class AuthorizationFilter(
 
         val authorization = exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)
             ?: throw UnAuthorizedException("Authorization 헤더가 존재하지 않습니다.")
+
+        // 개발자테스트인 경우 인증제외처리
+        if(DEV_PREFIX in authorization) {
+            return chain.filter(exchange)
+        }
 
         if(TOKEN_PREFIX in authorization) {
             val idToken = authorization.substringAfter(TOKEN_PREFIX)

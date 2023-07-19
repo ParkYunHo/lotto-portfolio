@@ -14,9 +14,11 @@ interface FindStoreUseCase {
      *
      * @param location [String]
      * @param subLocation [String]
+     * @param sort [String]
+     * @param option [String]
      * @return [Flux]<[LottoStoreTotalInfo]>
      * @author yoonho
      * @since 2023.07.18
      */
-    fun findStore(location: String, subLocation: String): Flux<LottoStoreTotalInfo>
+    fun findStore(location: String, subLocation: String, sort: String, option: String): Flux<LottoStoreTotalInfo>
 }

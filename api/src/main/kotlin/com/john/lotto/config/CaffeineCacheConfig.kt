@@ -49,6 +49,7 @@ class CaffeineCacheConfig {
                     .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
                     .build()
             ),
+
             // 당첨번호 조회 (특정번호 조회)
             CaffeineCache(
                 "number.one",
@@ -58,12 +59,32 @@ class CaffeineCacheConfig {
                     .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
                     .build()
             ),
+            // 당첨번호 조회 (최신번호 조회)
             CaffeineCache(
                 "number.latest",
                 Caffeine.newBuilder().recordStats()
                     .initialCapacity(100)
                     .maximumSize(10000)
                     .expireAfterWrite(Duration.ofMinutes(10L))      // 10분
+                    .build()
+            ),
+
+            // 로또판매점 조회
+            CaffeineCache(
+                "store.common",
+                Caffeine.newBuilder().recordStats()
+                    .initialCapacity(100)
+                    .maximumSize(10000)
+                    .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
+                    .build()
+            ),
+            // 판매점 지역조회
+            CaffeineCache(
+                "store.location",
+                Caffeine.newBuilder().recordStats()
+                    .initialCapacity(100)
+                    .maximumSize(10000)
+                    .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
                     .build()
             ),
         )

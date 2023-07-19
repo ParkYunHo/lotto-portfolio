@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    generate-ddl: true
+  datasource:
+    hikari:
+      connection-timeout: 5000
+      minimum-idle: 10
+      maximum-pool-size: 100
+
+hibernate:
+  show_sql: false
+  format_sql: false
+  physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+# Vault AppRole
+vault:
+  uri: http://146.56.113.143:8200
+  token:
+  app-role:
+    role-id: b59aa858-0d43-dbf7-b247-b00529cdeb7b
+    secret-id: 8dc3e640-3597-f7cd-0e81-7e1551625c2d
+  secret:
+    appconfig: lotto-app/prod

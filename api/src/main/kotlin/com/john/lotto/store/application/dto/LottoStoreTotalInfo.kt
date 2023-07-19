@@ -1,6 +1,8 @@
 package com.john.lotto.store.application.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.LocalDate
 
 /**
  * @author yoonho
@@ -34,5 +36,13 @@ data class LottoStoreTotalInfo(
     var firmnm: String? = "",
 
     // 1등 당첨회차
-    var drwtNos: List<Long> = mutableListOf()
-)
+    var drwtInfos: List<DrwtInfo> = mutableListOf()
+) {
+    data class DrwtInfo(
+        val drwtNo: Long,
+        @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        val drwtDate: LocalDate,
+        val firstWinamnt: Long,
+        val firstPrzwnerCo: Long
+    )
+}
