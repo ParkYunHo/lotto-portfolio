@@ -2,7 +2,7 @@ package com.john.lotto.drwtstore
 
 import com.john.lotto.drwtstore.dto.DrwtStoreDto
 import com.john.lotto.drwtstore.dto.QDrwtStoreDto
-import com.john.lotto.entity.QLottoDrwtStore
+import com.john.lotto.entity.lotto.QLottoDrwtStore
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier

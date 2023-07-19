@@ -5,10 +5,12 @@ import com.john.lotto.auth.application.dto.JwkInfo
 import com.john.lotto.auth.application.dto.ResultTokenInfo
 import com.john.lotto.auth.application.dto.TokenInfo
 import com.john.lotto.auth.application.port.out.AuthPort
+import com.john.lotto.common.constants.CommCode
 import com.john.lotto.common.dto.JwtTokenInfo
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.common.exception.UnAuthorizedException
+import com.john.lotto.common.utils.CipherUtils
 import com.john.lotto.common.utils.EnvironmentUtils
 import com.john.lotto.common.utils.ObjectMapperUtils
 import io.jsonwebtoken.ExpiredJwtException
@@ -196,7 +198,8 @@ class KakaoAuthAdapter(
                 return Mono.error(UnAuthorizedException("유효한 ID토큰이 아닙니다 - expiration: ${claims.expiration}"))
             }
 
-            return Mono.just(claims.subject)
+            val userId = CipherUtils.encode(str = "${CommCode.Social.KAKAO.code}:${claims.subject}")
+            return Mono.just(userId)
         } catch (uae: UnAuthorizedException) {
             return Mono.error(uae)
         } catch (ejx: ExpiredJwtException) {

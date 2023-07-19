@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.john.lotto.ApiApplicationTests
 import com.john.lotto.common.dto.JwtTokenInfo
+import com.john.lotto.common.utils.CipherUtils
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Assertions.*
@@ -51,5 +52,15 @@ class NumberServiceTest(
 
         log.info(" >>> payload: $payload, exp: $date")
 
+    }
+
+    Given("TEST2") {
+        val t = "kakao:123456"
+
+        val t2 = CipherUtils.encode(t)
+        val t3 = CipherUtils.validate(t ,t2)
+        val t4 = CipherUtils.validate("google:123456" ,t2)
+
+        log.info(" >>> encode: $t2, validate: $t3, validate_fail: $t4")
     }
 })

@@ -1,19 +1,15 @@
 package com.john.lotto.number
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.john.lotto.CoreApplicationTests
-import com.john.lotto.entity.LottoStore
 import com.john.lotto.number.dto.LottoNumberDto
 import com.john.lotto.store.dto.LottoStoreDto
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Assertions.*
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import javax.sql.DataSource
 
 /**
  * @author yoonho

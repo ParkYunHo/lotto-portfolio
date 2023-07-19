@@ -1,7 +1,7 @@
 package com.john.lotto.statics
 
-import com.john.lotto.entity.QLottoNumber
-import com.john.lotto.entity.QLottoWinAmount
+import com.john.lotto.entity.lotto.QLottoNumber
+import com.john.lotto.entity.lotto.QLottoWinAmount
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.slf4j.LoggerFactory

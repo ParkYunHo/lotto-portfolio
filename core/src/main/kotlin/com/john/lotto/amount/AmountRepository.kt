@@ -2,7 +2,7 @@ package com.john.lotto.amount
 
 import com.john.lotto.amount.dto.LottoWinAmountDto
 import com.john.lotto.amount.dto.QLottoWinAmountDto
-import com.john.lotto.entity.QLottoWinAmount
+import com.john.lotto.entity.lotto.QLottoWinAmount
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.beans.factory.annotation.Qualifier

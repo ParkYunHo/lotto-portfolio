@@ -18,14 +18,23 @@ hibernate:
   format_sql: false
   physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
+#vault:
+#  uri: http://localhost:8200
+#  token: admin
+#  app-role:
+#    role-id:
+#    secret-id:
+#  secret:
+#    appconfig: lotto-app/local
+
 vault:
-  uri: http://localhost:8200
-  token: admin
+  uri: http://146.56.113.143:8200
+  token:
   app-role:
-    role-id:
-    secret-id:
+    role-id: b59aa858-0d43-dbf7-b247-b00529cdeb7b
+    secret-id: 8dc3e640-3597-f7cd-0e81-7e1551625c2d
   secret:
-    appconfig: lotto-app/local
+    appconfig: lotto-app/prod
 
 auth:
   url:

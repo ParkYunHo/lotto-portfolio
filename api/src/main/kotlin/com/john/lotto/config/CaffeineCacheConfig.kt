@@ -87,5 +87,15 @@ class CaffeineCacheConfig {
                     .expireAfterWrite(Duration.ofMinutes(60L))      // 1시간
                     .build()
             ),
+
+            // 사용자 정보조회
+            CaffeineCache(
+                "member.common",
+                Caffeine.newBuilder().recordStats()
+                    .initialCapacity(100)
+                    .maximumSize(10000)
+                    .expireAfterWrite(Duration.ofMinutes(10L))      // 10분
+                    .build()
+            ),
         )
 }

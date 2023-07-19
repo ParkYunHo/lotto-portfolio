@@ -35,4 +35,9 @@ class CommCode {
         ALL_EXCEPT_GOOD_PLACE("2", "명당을 제외한 판매점")
         ;
     }
+
+    enum class Social(val code: String, val desc: String) {
+        KAKAO("kakao", "카카오")
+        ;
+    }
 }

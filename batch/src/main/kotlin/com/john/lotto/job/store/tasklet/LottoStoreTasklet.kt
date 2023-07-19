@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.john.lotto.common.utils.NoticeMessageUtils
-import com.john.lotto.entity.LottoStore
+import com.john.lotto.entity.lotto.LottoStore
 import com.john.lotto.rest.LottoFeignClient
 import com.john.lotto.rest.dto.LottoStoreInfoDto
 import com.john.lotto.rest.dto.LottoStoreInput
 import com.john.lotto.store.StoreRepository
-import com.john.lotto.store.StoreRepositoryImpl
 import com.john.lotto.store.dto.LottoStoreDto
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.ExitStatus

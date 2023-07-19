@@ -28,6 +28,7 @@ class AuthorizationFilter(
 
     @Value("\${auth.white-list}")
     private lateinit var whiteList: List<String>
+
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         // WhiteList에 포함된 경로인 경우, 인증로직을 수행하지 않음
         val path = exchange.request.path.pathWithinApplication().value()

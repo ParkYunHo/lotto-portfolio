@@ -1,6 +1,6 @@
 package com.john.lotto.store
 
-import com.john.lotto.entity.LottoStore
+import com.john.lotto.entity.lotto.LottoStore
 import org.springframework.data.jpa.repository.JpaRepository
 
 /**

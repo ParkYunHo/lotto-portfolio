@@ -1,6 +1,6 @@
 package com.john.lotto.number
 
-import com.john.lotto.entity.QLottoNumber
+import com.john.lotto.entity.lotto.QLottoNumber
 import com.john.lotto.number.dto.LottoNumberDto
 import com.john.lotto.number.dto.QLottoNumberDto
 import com.querydsl.jpa.impl.JPAQueryFactory

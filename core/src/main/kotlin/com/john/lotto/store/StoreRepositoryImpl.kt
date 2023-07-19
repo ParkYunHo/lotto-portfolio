@@ -1,6 +1,6 @@
 package com.john.lotto.store
 
-import com.john.lotto.entity.QLottoStore
+import com.john.lotto.entity.lotto.QLottoStore
 import com.john.lotto.store.dto.LocationDto
 import com.john.lotto.store.dto.LottoStoreDto
 import com.john.lotto.store.dto.QLocationDto
