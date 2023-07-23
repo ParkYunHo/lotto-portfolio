@@ -38,7 +38,7 @@ class NumberRouter(
                 beanClass = NumberHandler::class,
                 beanMethod = "findLottoNumber",
                 operation = Operation(
-                    tags = ["당첨번호 조회"],
+                    tags = ["당첨번호"],
                     summary = "특정 당첨번호 조회",
                     operationId = "findLottoNumber",
                     parameters = [
@@ -67,7 +67,7 @@ class NumberRouter(
                 beanClass = NumberHandler::class,
                 beanMethod = "findLottoNumberLatest",
                 operation = Operation(
-                    tags = ["당첨번호 조회"],
+                    tags = ["당첨번호"],
                     summary = "최신 당첨번호 조회",
                     operationId = "findLottoNumberLatest",
                     responses = [

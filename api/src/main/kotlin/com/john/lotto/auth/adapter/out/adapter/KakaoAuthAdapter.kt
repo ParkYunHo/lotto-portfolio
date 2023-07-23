@@ -13,6 +13,7 @@ import com.john.lotto.common.exception.UnAuthorizedException
 import com.john.lotto.common.utils.CipherUtils
 import com.john.lotto.common.utils.EnvironmentUtils
 import com.john.lotto.common.utils.ObjectMapperUtils
+import com.john.lotto.member.MemberRepository
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import org.slf4j.LoggerFactory
@@ -36,7 +37,7 @@ import java.util.*
 @Component
 class KakaoAuthAdapter(
     private val defaultWebClient: WebClient,
-    private val objectMapper: ObjectMapper
+    private val memberRepository: MemberRepository
 ): AuthPort {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -199,6 +200,13 @@ class KakaoAuthAdapter(
             }
 
             val userId = CipherUtils.encode(str = "${CommCode.Social.KAKAO.code}:${claims.subject}")
+
+            // 회원정보 등록여부 체크
+            val existsMember = memberRepository.findMember(userId = userId)
+            if(existsMember == null) {
+                return Mono.error(UnAuthorizedException("등록된 회원이 아닙니다 - userId: $userId"))
+            }
+
             return Mono.just(userId)
         } catch (uae: UnAuthorizedException) {
             return Mono.error(uae)

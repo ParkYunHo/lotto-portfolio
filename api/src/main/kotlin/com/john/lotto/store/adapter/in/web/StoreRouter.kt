@@ -37,7 +37,7 @@ class StoreRouter(
                 beanClass = StoreHandler::class,
                 beanMethod = "findLocation",
                 operation = Operation(
-                    tags = ["로또판매점 조회"],
+                    tags = ["로또판매점"],
                     summary = "판매점 위치정보 조회",
                     operationId = "findLocation",
                     responses = [
@@ -56,7 +56,7 @@ class StoreRouter(
                 beanClass = StoreHandler::class,
                 beanMethod = "findStore",
                 operation = Operation(
-                    tags = ["로또판매점 조회"],
+                    tags = ["로또판매점"],
                     summary = "로또판매점 리스트 조회",
                     operationId = "findStore",
                     parameters = [
