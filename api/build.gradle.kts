@@ -61,6 +61,7 @@ jib {
         jvmFlags = listOf(
             "-Dsun.net.inetaddr.ttl=0",     // DNS cache TTL
             "-XX:+PrintCommandLineFlags",   // Print JVM Flags
+            "-Dspring.profiles.active=prod"     // profile 설정
         )
     }
 }

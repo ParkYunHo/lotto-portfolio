@@ -1,0 +1,46 @@
+#name: ci-batch
+#
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      job_name:
+#        required: true
+#        type: string
+#        description: 실행할 job 명칭 input
+#
+#jobs:
+#  ci-batch:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Git Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Setup JDK
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 17
+#
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x gradlew
+#
+#      - name: Build Gradle
+#        run:
+#
+#      - name: Dockerhub Login
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: Build Gradle with JIB (API)
+#        run: ./gradlew clean --stacktrace --build-file=./batch/build.gradle.kts --Dspring.profiles.active=prod --job.name=${{ github.event.inputs.job_name }} build
+#
+##      - name: Execute Remote SSH & Deploy 'API' module
+##        uses: appleboy/ssh-action@master
+##        with:
+##          host: ${{ secrets.REMOTE_SSH_HOST }}
+##          username: ${{ secrets.REMOTE_SSH_USERNAME }}
+##          key: ${{ secrets.REMOTE_SSH_KEY }}
+##          script: |
+##            docker pull johnpark0921/lotto-portfolio
+##            docker container run --name lotto-portfolio -p 8080:8080 johnpark0921/lotto-portfolio
