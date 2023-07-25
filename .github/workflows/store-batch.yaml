@@ -1,0 +1,26 @@
+name: store-batch
+
+on:
+  schedule:
+    - cron: '0 21 1 */6 *'    # 6개월마다 1일 21시 (1/1, 7/1)
+
+jobs:
+  store-batch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Gradle
+        run: ./gradlew clean --stacktrace --build-file=./batch/build.gradle.kts --exclude-task test build
+
+      - name: Job Execute
+        run: java -jar --Dspring.profiles.active=prod --job.name=lottoStoreJob ./build/libs/batch-0.0.1-SNAPSHOT.jar

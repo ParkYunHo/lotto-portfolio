@@ -1,0 +1,39 @@
+name: drwtStore-batch
+
+on:
+  workflow_dispatch:
+    inputs:
+      startDrwtNo:
+        description: 시작회차
+        default: ""
+        type: string
+      endDrwtNo:
+        description: 종료회차
+        default: ""
+        type: string
+  schedule:
+    - cron: '0 22 * * SUN'    # 매주 일요일 22시
+
+jobs:
+  drwtStore-batch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Gradle
+        run: ./gradlew clean --stacktrace --build-file=./batch/build.gradle.kts --exclude-task test build
+
+      - name: Job Execute
+        run: java -jar --Dspring.profiles.active=prod --job.name=lottoDrwtStoreJob startDrwtNo=$START_DRWTNO endDrwtNo=$END_DRWTNO ./build/libs/batch-0.0.1-SNAPSHOT.jar
+        env:
+          START_DRWTNO: ${{ inputs.startDrwtNo }}
+          END_DRWTNO: ${{ inputs.endDrwtNo }}
