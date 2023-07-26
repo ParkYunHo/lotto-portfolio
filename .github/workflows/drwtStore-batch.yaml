@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew clean --stacktrace --build-file=./batch/build.gradle.kts --exclude-task test build
 
       - name: Job Execute
-        run: java -jar --Dspring.profiles.active=prod --job.name=lottoDrwtStoreJob startDrwtNo=$START_DRWTNO endDrwtNo=$END_DRWTNO ./build/libs/batch-0.0.1-SNAPSHOT.jar
+        run: java -Dspring.profiles.active=prod -jar ./batch/build/libs/batch-0.0.1-SNAPSHOT.jar --spring.batch.job.names=lottoDrwtStoreJob --startDrwtNo=$START_DRWTNO --endDrwtNo=$END_DRWTNO
         env:
           START_DRWTNO: ${{ inputs.startDrwtNo }}
           END_DRWTNO: ${{ inputs.endDrwtNo }}
