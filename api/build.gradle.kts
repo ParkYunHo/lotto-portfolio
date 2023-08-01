@@ -1,5 +1,6 @@
 plugins {
     id("com.google.cloud.tools.jib") version "3.3.2"
+    id("groovy")
 }
 
 dependencies {
@@ -22,12 +23,19 @@ dependencies {
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     testImplementation("org.spockframework:spock-core")
+    testImplementation("org.spockframework:spock-core")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.spockframework:spock-core")
+    testImplementation("org.spockframework:spock-core")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
     // Spock
     testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
     testImplementation("org.spockframework:spock-spring:2.3-groovy-4.0")
+    testImplementation("org.apache.groovy:groovy:4.0.12")
 
     // Cucumber
     testImplementation("io.cucumber:cucumber-java:7.12.1")
