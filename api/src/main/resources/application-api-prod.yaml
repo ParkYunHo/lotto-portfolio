@@ -14,4 +14,4 @@ springdoc:
 
 lotto:
   api:
-    url: http://localhost:8080
+    url: http://138.2.126.76:8080

@@ -43,3 +43,7 @@ auth:
     connect-timeout: 3000
     read-timeout: 2000
     user-agent: lotto-portfolio
+
+lotto:
+  api:
+    url: http://localhost:8080

@@ -52,10 +52,11 @@ class KakaoAuthAdapter(
         try {
             val kauthUrl = EnvironmentUtils.getProperty("auth.api.kauth", "https://kauth.kakao.com")
             val clientId = EnvironmentUtils.getProperty("auth.key.client-id", "")
+            val lottoUrl = EnvironmentUtils.getProperty("lotto.api.url", "http://localhost:8080")
 
             val queryParams = LinkedMultiValueMap<String, String>()
             queryParams.add("client_id", clientId)
-            queryParams.add("redirect_uri", "http://localhost:8080/auth/token")
+            queryParams.add("redirect_uri", "$lottoUrl/auth/token")
             queryParams.add("response_type", "code")
             queryParams.add("scope", "openid")
             queryParams.add("state", "kakao")
