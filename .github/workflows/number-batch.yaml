@@ -50,5 +50,5 @@ jobs:
           script: |
             echo jobName=lottoNumberJob startDrwtNo=${{ inputs.startDrwtNo }} endDrwtNo=${{ inputs.endDrwtNo }}
             ls ~/num-deploy/batch/build/libs -all
-            java -Dspring.profiles.active=prod -jar ~/num-deploy/batch/build/libs/batch-0.0.1-SNAPSHOT.jar --job.name=lottoNumberJob --startDrwtNo=${{ inputs.startDrwtNo }} --endDrwtNo=${{ inputs.endDrwtNo }}
+            java -Dspring.profiles.active=prod -jar ~/num-deploy/batch/build/libs/batch-0.0.1-SNAPSHOT.jar --job.name=lottoNumberJob startDrwtNo=${{ inputs.startDrwtNo }} endDrwtNo=${{ inputs.endDrwtNo }}
             rm -rf ~/num-deploy
