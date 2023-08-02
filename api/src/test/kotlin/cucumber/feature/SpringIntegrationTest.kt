@@ -1,4 +1,4 @@
-package com.john.lotto.cucumber.feature
+package cucumber.feature
 
 import com.john.lotto.ApiApplicationTests
 import io.cucumber.spring.CucumberContextConfiguration
@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 
 /**
  * @author yoonho
- * @since 2023.06.23
+ * @since 2023.08.02
  */
 @SpringBootTest(classes = [ApiApplicationTests::class])
 @CucumberContextConfiguration

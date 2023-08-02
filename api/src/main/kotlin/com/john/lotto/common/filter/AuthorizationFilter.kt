@@ -43,6 +43,7 @@ class AuthorizationFilter(
 
         // 개발자테스트인 경우 인증제외처리
         if(DEV_PREFIX in authorization) {
+            exchange.attributes[USER_ID_ATTRIBUTE] = "TEST_USER_ID"
             return chain.filter(exchange)
         }
 

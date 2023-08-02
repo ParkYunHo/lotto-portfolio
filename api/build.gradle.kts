@@ -1,7 +1,12 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
-    id("com.google.cloud.tools.jib") version "3.3.2"
-    id("groovy")
+    id("com.google.cloud.tools.jib") version "3.3.2"    // JIB 설정
+    id("groovy")                                        // Spock Groovy문법 설정
+    id("org.asciidoctor.jvm.convert") version "3.3.2"   // Spring Rest Docs 설정
 }
+
+val asciidoctorExt: Configuration by configurations.creating
 
 dependencies {
     implementation(project(":core"))
@@ -37,6 +42,10 @@ dependencies {
     testImplementation("org.spockframework:spock-spring:2.3-groovy-4.0")
     testImplementation("org.apache.groovy:groovy:4.0.12")
 
+    // spring restdocs
+    testImplementation("org.springframework.restdocs:spring-restdocs-webtestclient")
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+
     // Cucumber
     testImplementation("io.cucumber:cucumber-java:7.12.1")
     testImplementation("io.cucumber:cucumber-spring:7.12.1")
@@ -45,6 +54,69 @@ dependencies {
 
     testImplementation("io.projectreactor:reactor-test")
 }
+
+// Spring Rest Docs 설정
+tasks {
+    val snippetsDir = file("build/generated-snippets")
+
+    test {
+        outputs.dir(snippetsDir)
+        useJUnitPlatform()
+
+        testLogging {
+            showStandardStreams = true
+            showCauses = true
+            showExceptions = true
+            showStackTraces = true
+            exceptionFormat = TestExceptionFormat.FULL
+        }
+
+        options {
+            systemProperty("cucumber.features", "src/test/resources")
+            systemProperty("cucumber.glue", "cucumber.feature")
+        }
+    }
+
+    asciidoctor {
+        dependsOn(test)
+
+        inputs.dir(snippetsDir)
+        configurations(asciidoctorExt.name)
+
+        baseDirFollowsSourceFile()
+
+        doFirst {
+            delete("src/main/resources/static/docs")
+        }
+
+        doLast {
+            copy {
+                from(file("build/docs/asciidoc"))
+                into(file("src/main/resources/static/docs"))
+            }
+        }
+    }
+
+    build {
+        dependsOn(asciidoctor)
+    }
+
+    jar {
+        enabled = false
+        dependsOn(asciidoctor)
+    }
+
+    bootJar {
+        enabled = true
+        dependsOn(asciidoctor)
+
+        copy {
+            from(file("${asciidoctor.get().outputDir}/html5"))
+            into(file("static/docs"))
+        }
+    }
+}
+
 
 // JIB 설정
 val tagName = project.properties["tagName"] ?: ""
@@ -78,5 +150,3 @@ jib {
         )
     }
 }
-
-

@@ -1,0 +1,10 @@
+|===
+|Name|Description|Required|ETC
+
+{{#headers}}
+|{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+|{{#tableCellContent}}{{^optional}}true{{/optional}}{{/tableCellContent}}
+|{{#etc}}{{.}}{{/etc}}
+{{/headers}}
+|===
