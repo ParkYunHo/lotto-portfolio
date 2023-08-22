@@ -18,11 +18,6 @@ class WebFluxConfig: WebFluxConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("*")
             .allowedHeaders("*")
-            .allowedMethods(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.DELETE.name(),
-                HttpMethod.HEAD.name(),
-            )
+            .allowedMethods("*")
     }
 }
