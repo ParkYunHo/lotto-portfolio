@@ -2,9 +2,11 @@ package com.john.lotto.common.filter
 
 import com.john.lotto.auth.application.port.out.AuthPort
 import com.john.lotto.common.exception.UnAuthorizedException
+import com.john.lotto.member.MemberRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.server.ServerWebExchange
@@ -23,6 +25,7 @@ private const val USER_ID_ATTRIBUTE = "userId"
 @Component
 class AuthorizationFilter(
     private val authPort: AuthPort,
+    private val memberRepository: MemberRepository
 ): WebFilter {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -41,7 +44,7 @@ class AuthorizationFilter(
         val authorization = exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)
             ?: throw UnAuthorizedException("Authorization 헤더가 존재하지 않습니다.")
 
-        // 개발자테스트인 경우 인증제외처리
+        // 개발용 토큰인 경우 인증제외처리
         if(DEV_PREFIX in authorization) {
             exchange.attributes[USER_ID_ATTRIBUTE] = "TEST_USER_ID"
             return chain.filter(exchange)
@@ -54,6 +57,19 @@ class AuthorizationFilter(
                 return authPort.keys()
                     .flatMap { jwtInfo ->
                         authPort.validate(idToken, jwtInfo)
+                            .flatMap {
+                                // 사용자등록 API의 경우 회원체크로직 제외
+                                if(path == "/api/member" && exchange.request.method.matches(HttpMethod.POST.name())) {
+                                    return@flatMap Mono.just(it)
+                                }
+
+                                // 회원정보 등록여부 체크
+                                val existsMember = memberRepository.findMember(userId = it)
+                                if(existsMember == null) {
+                                    return@flatMap Mono.error(UnAuthorizedException("등록된 회원이 아닙니다 - userId: $it"))
+                                }
+                                return@flatMap Mono.just(it)
+                            }
                             .flatMap {
                                 exchange.attributes[USER_ID_ATTRIBUTE] = it
                                 chain.filter(exchange)

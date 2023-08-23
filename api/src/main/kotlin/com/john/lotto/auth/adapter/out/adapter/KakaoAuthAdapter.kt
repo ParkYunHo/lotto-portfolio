@@ -202,12 +202,6 @@ class KakaoAuthAdapter(
 
             val userId = CipherUtils.encode(str = "${CommCode.Social.KAKAO.code}:${claims.subject}")
 
-            // 회원정보 등록여부 체크
-            val existsMember = memberRepository.findMember(userId = userId)
-            if(existsMember == null) {
-                return Mono.error(UnAuthorizedException("등록된 회원이 아닙니다 - userId: $userId"))
-            }
-
             return Mono.just(userId)
         } catch (uae: UnAuthorizedException) {
             return Mono.error(uae)
