@@ -14,7 +14,8 @@ class JwtTokenInfo {
         val sub: String,
         val auth_time: Int,
         val iss: String,
-        val nickname: String,
+        val nickname: String? = "",
+        val email: String? = "",
         val exp: Int,
         val iat: Int,
     ): Serializable

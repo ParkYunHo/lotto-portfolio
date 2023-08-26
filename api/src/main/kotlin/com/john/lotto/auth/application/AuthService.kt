@@ -41,16 +41,19 @@ class AuthService(
     override fun token(state: String, code: String): Mono<ResultTokenInfo> =
         authPort.token(state, code)
             .flatMap {
-                val nickname = ObjectMapperUtils.decode(
+                val payload = ObjectMapperUtils.decode(
                     it.idToken.split(".")[1],
                     JwtTokenInfo.Payload::class.java
-                ).nickname
+                )
 
                 Mono.just(
                     ResultTokenInfo(
                         idToken = it.idToken,
+                        expiresIn = it.expiresIn,
                         refreshToken = it.refreshToken,
-                        nickname = nickname
+                        refreshTokenExpiresIn = it.refreshTokenExpiresIn,
+                        nickname = payload.nickname,
+                        email = payload.email
                     )
                 )
             }
@@ -66,16 +69,19 @@ class AuthService(
     override fun refresh(refreshToken: String): Mono<ResultTokenInfo> =
         authPort.refresh(refreshToken = refreshToken)
             .flatMap {
-                val nickname = ObjectMapperUtils.decode(
+                val payload = ObjectMapperUtils.decode(
                     it.idToken.split(".")[1],
                     JwtTokenInfo.Payload::class.java
-                ).nickname
+                )
 
                 Mono.just(
                     ResultTokenInfo(
                         idToken = it.idToken,
+                        expiresIn = it.expiresIn,
                         refreshToken = it.refreshToken,
-                        nickname = nickname
+                        refreshTokenExpiresIn = it.refreshTokenExpiresIn,
+                        nickname = payload.nickname,
+                        email = payload.email
                     )
                 )
             }

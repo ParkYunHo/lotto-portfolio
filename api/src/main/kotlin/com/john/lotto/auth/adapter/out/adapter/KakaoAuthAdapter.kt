@@ -1,6 +1,5 @@
 package com.john.lotto.auth.adapter.out.adapter
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.john.lotto.auth.application.dto.JwkInfo
 import com.john.lotto.auth.application.dto.ResultTokenInfo
 import com.john.lotto.auth.application.dto.TokenInfo
@@ -13,7 +12,6 @@ import com.john.lotto.common.exception.UnAuthorizedException
 import com.john.lotto.common.utils.CipherUtils
 import com.john.lotto.common.utils.EnvironmentUtils
 import com.john.lotto.common.utils.ObjectMapperUtils
-import com.john.lotto.member.MemberRepository
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import org.slf4j.LoggerFactory
@@ -30,14 +28,11 @@ import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.spec.RSAPublicKeySpec
-import java.time.Instant
-import java.time.LocalDateTime
 import java.util.*
 
 @Component
 class KakaoAuthAdapter(
-    private val defaultWebClient: WebClient,
-    private val memberRepository: MemberRepository
+    private val defaultWebClient: WebClient
 ): AuthPort {
     private val log = LoggerFactory.getLogger(this::class.java)
 
