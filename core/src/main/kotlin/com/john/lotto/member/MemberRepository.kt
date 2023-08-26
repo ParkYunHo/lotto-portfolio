@@ -3,6 +3,7 @@ package com.john.lotto.member
 import com.john.lotto.entity.personal.QMember
 import com.john.lotto.member.dto.MemberDto
 import com.john.lotto.member.dto.QMemberDto
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -49,6 +50,24 @@ class MemberRepository(
                 input.createdAt,
             )
             .execute()
+
+    /**
+     * 회원정보 수정
+     *
+     * @param input [MemberDto]
+     * @return [Long]
+     * @author yoonho
+     * @since 2023.08.26
+     */
+    @Transactional
+    fun updateMember(input: MemberDto): Long =
+        queryFactory
+            .update(memberEntity)
+            .set(memberEntity.email, input.email)
+            .set(memberEntity.nickname, input.nickname)
+            .where(memberEntity.userId.eq(input.userId))
+            .execute()
+
 
     /**
      * 회원정보 조회

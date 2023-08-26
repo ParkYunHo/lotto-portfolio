@@ -1,11 +1,13 @@
 package com.john.lotto.member.application
 
 import com.john.lotto.common.exception.BadRequestException
+import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.member.MemberRepository
 import com.john.lotto.member.adapter.`in`.web.dto.MemberInput
 import com.john.lotto.member.application.port.`in`.DeleteMemberUseCase
 import com.john.lotto.member.application.port.`in`.FindMemberUseCase
 import com.john.lotto.member.application.port.`in`.RegisterUseCase
+import com.john.lotto.member.application.port.`in`.UpdateUseCase
 import com.john.lotto.member.dto.MemberDto
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
@@ -20,7 +22,7 @@ import java.time.LocalDateTime
 @Service
 class MemberService(
     private val memberRepository: MemberRepository
-): RegisterUseCase, FindMemberUseCase, DeleteMemberUseCase {
+): RegisterUseCase, FindMemberUseCase, DeleteMemberUseCase, UpdateUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -45,9 +47,42 @@ class MemberService(
             updatedAt = null,
             createdAt = LocalDateTime.now()
         )
-        memberRepository.insertMember(param)
+        val result = memberRepository.insertMember(param)
+        if(result <= 0) {
+            throw InternalServerException("사용자 등록에 실패하였습니다.")
+        }
 
         return Mono.just(param)
+    }
+
+    /**
+     * 사용자 정보수정
+     *
+     * @param userId [String]
+     * @param input [MemberInput]
+     * @return [Mono]<[MemberDto]>
+     * @author yoonho
+     * @since 2023.08.25
+     */
+    override fun update(userId: String, input: MemberInput): Mono<MemberDto> {
+        val userInfo = memberRepository.findMember(userId = userId) ?: throw BadRequestException("미등록된 회원입니다 - userId: $userId")
+
+        // 이메일 업데이트
+        if(input.email.isNullOrEmpty()) {
+            userInfo.email = input.email!!
+        }
+
+        // 닉네임 업데이트
+        if(input.nickName.isNullOrEmpty()) {
+            userInfo.nickname = input.nickName!!
+        }
+
+        val result = memberRepository.updateMember(userInfo)
+        if(result <= 0) {
+            throw InternalServerException("사용자 정보수정에 실패하였습니다.")
+        }
+
+        return Mono.just(userInfo)
     }
 
     /**

@@ -60,6 +60,34 @@ class MemberRouter(
             ),
             RouterOperation(
                 path = "/api/member",
+                method = [RequestMethod.PATCH],
+                beanClass = MemberHandler::class,
+                beanMethod = "update",
+                operation = Operation(
+                    tags = ["회원정보"],
+                    summary = "회원정보 수정",
+                    operationId = "update",
+                    requestBody = RequestBody(
+                        required = true,
+                        description = "회원 수정정보",
+                        content = [
+                            Content(
+                                schema = Schema(implementation = MemberInput::class)
+                            )
+                        ]
+                    ),
+                    responses = [
+                        ApiResponse(
+                            description = "수정된 회원정보",
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = MemberDto::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "OpenID Connection Authentication")]
+                )
+            ),
+            RouterOperation(
+                path = "/api/member",
                 method = [RequestMethod.GET],
                 beanClass = MemberHandler::class,
                 beanMethod = "search",
@@ -101,6 +129,7 @@ class MemberRouter(
     fun memberRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/api/member", memberHandler::register)
+            PATCH("/api/member", memberHandler::update)
             GET("/api/member", memberHandler::search)
             DELETE("/api/member", memberHandler::delete)
         }

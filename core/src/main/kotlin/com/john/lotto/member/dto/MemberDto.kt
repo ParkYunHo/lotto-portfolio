@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 data class MemberDto @QueryProjection constructor(
     val userId: String,
 
-    val email: String,
-    val nickname: String,
+    var email: String,
+    var nickname: String,
 
     @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val updatedAt: LocalDateTime? = null,
