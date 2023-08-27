@@ -39,7 +39,7 @@ data class LottoStoreTotalInfo(
     var storeName: String? = "",
 
     // 1등 당첨회차
-    @Schema(description = "당첨정보 리스트", example = "0")
+    @Schema(description = "당첨정보 리스트", example = "0", implementation = DrwtInfo::class)
     var drwtInfos: List<DrwtInfo> = mutableListOf()
 ) {
 

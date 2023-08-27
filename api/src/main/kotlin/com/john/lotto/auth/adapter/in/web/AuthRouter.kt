@@ -83,10 +83,10 @@ class AuthRouter(
                     operationId = "refresh",
                     parameters = [
                         Parameter(
-                            name = "refresh_token",
+                            name = "refreshToken",
                             description = "리프레시 토큰",
                             examples = [
-                                ExampleObject(name = "refresh_token", value = "TEST_REFRESH_TOKEN", description = "리프레시 토큰")
+                                ExampleObject(name = "refreshToken", value = "TEST_REFRESH_TOKEN", description = "리프레시 토큰")
                             ]
                         )
                     ],
