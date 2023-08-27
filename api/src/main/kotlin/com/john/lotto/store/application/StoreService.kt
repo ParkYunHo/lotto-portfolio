@@ -52,27 +52,27 @@ class StoreService(
                 LottoStoreTotalInfo.DrwtInfo(
                     drwtNo = it.drwtNo!!,
                     drwtDate = it.drwtDate!!,
-                    firstWinamnt = it.firstWinamnt!!,
-                    firstPrzwnerCo = it.firstPrzwnerCo!!
+                    firstWinAmount = it.firstWinamnt!!,
+                    firstWinCount = it.firstPrzwnerCo!!
                 )
             }
 
             lottoStoreTotalInfoList.add(
                 LottoStoreTotalInfo(
-                    rtlrid = store.rtlrid,
+                    storeId = store.rtlrid,
 
                     latitude = store.latitude,
                     longitude = store.longitude,
 
-                    bplclocplc1 = store.bplclocplc1,
-                    bplclocplc2 = store.bplclocplc2,
-                    bplclocplc3 = store.bplclocplc3,
-                    bplclocplc4 = store.bplclocplc4,
+                    address1 = store.bplclocplc1,
+                    address2 = store.bplclocplc2,
+                    address3 = store.bplclocplc3,
+                    address4 = store.bplclocplc4,
 
-                    bplcdorodtladres = store.bplcdorodtladres,
-                    bplclocplcdtladres = store.bplclocplcdtladres,
-                    rtlrstrtelno = store.rtlrstrtelno,
-                    firmnm = store.firmnm,
+                    newAddress = store.bplcdorodtladres,
+                    oldAddress = store.bplclocplcdtladres,
+                    phoneNo = store.rtlrstrtelno,
+                    storeName = store.firmnm,
 
                     drwtInfos = drwtInfos,
                 )
@@ -103,11 +103,11 @@ class StoreService(
         // 정렬옵션
         result = when(sort) {
             CommCode.Sort.NAME.code -> {
-                result.sortedBy { it.firmnm }
+                result.sortedBy { it.storeName }
             }
             CommCode.Sort.PRICE.code -> {
                 result.sortedByDescending { store ->
-                    store.drwtInfos.sumOf { it.firstWinamnt }
+                    store.drwtInfos.sumOf { it.firstWinAmount }
                 }
             }
             CommCode.Sort.LATEST.code -> {
@@ -115,7 +115,7 @@ class StoreService(
                     store.drwtInfos.sumOf { it.drwtNo }
                 }
             }
-            else -> result.sortedBy { it.firmnm }
+            else -> result.sortedBy { it.storeName }
         }
 
         return result
@@ -131,7 +131,7 @@ class StoreService(
     @Cacheable(cacheNames = ["store.location"], unless = "#result == null")
     override fun findLocation(): Flux<LocationDto> {
         val result = storeRepositoryImpl.findLocation()
-            .filter { it.bplclocplc1 != "" && it.bplclocplc2 != "" }
+            .filter { it.address1 != "" && it.address2 != "" }
 
         log.info(" >>> [findLocation] result: $result")
         return Flux.fromIterable(result)

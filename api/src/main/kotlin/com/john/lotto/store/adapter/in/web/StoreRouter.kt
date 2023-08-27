@@ -42,7 +42,7 @@ class StoreRouter(
                     operationId = "findLocation",
                     responses = [
                         ApiResponse(
-                            description = "위치정",
+                            description = "위치정보",
                             responseCode = "200",
                             content = [Content(schema = Schema(implementation = LocationDto::class))]
                         )

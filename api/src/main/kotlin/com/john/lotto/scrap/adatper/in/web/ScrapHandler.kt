@@ -34,7 +34,7 @@ class ScrapHandler(
     fun register(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(ScrapInput::class.java)
             .flatMap { return@flatMap Mono.just(it.validate()) }
-            .flatMap { registerScrapUseCase.register(userId = request.userId(), rtlrid = it.rtlrid!!) }
+            .flatMap { registerScrapUseCase.register(userId = request.userId(), rtlrid = it.storeId!!) }
             .flatMap { BaseResponse().success(it) }
 
     /**
@@ -61,7 +61,7 @@ class ScrapHandler(
     fun delete(request: ServerRequest): Mono<ServerResponse> =
         deleteStoreScrapUseCase.delete(
             userId = request.userId(),
-            rtlrid = request.queryParam("rtlrid").orElseThrow { BadRequestException("필수 입력값 누락") }.toString()
+            storeId = request.queryParam("storeId").orElseThrow { BadRequestException("필수 입력값 누락") }.toString()
         )
             .flatMap { BaseResponse().success(it) }
 }

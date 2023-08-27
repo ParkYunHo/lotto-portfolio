@@ -1,9 +1,12 @@
 package com.john.lotto.scrap.adatper.`in`.web
 
 import com.john.lotto.scrap.adatper.`in`.web.dto.ScrapInput
+import com.john.lotto.scrap.adatper.`in`.web.dto.ScrapResult
 import com.john.lotto.scrap.dto.StoreScrapDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -86,11 +89,18 @@ class ScrapRouter(
                     tags = ["판매점스크랩"],
                     summary = "판매점스크랩 삭제",
                     operationId = "delete",
+                    parameters = [
+                        Parameter(
+                            name = "storeId",
+                            description = "판매점 고유ID",
+                            example = "0"
+                        )
+                    ],
                     responses = [
                         ApiResponse(
-                            description = "삭제된 회원ID",
+                            description = "삭제된 판매점스크랩 정보",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = String::class))]
+                            content = [Content(schema = Schema(implementation = ScrapResult::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]

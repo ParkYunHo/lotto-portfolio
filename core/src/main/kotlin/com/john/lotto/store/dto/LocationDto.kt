@@ -1,15 +1,15 @@
 package com.john.lotto.store.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.querydsl.core.annotations.QueryProjection
 
 /**
  * @author yoonho
  * @since 2023.07.18
  */
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class LocationDto @QueryProjection constructor(
-    @JsonProperty("BPLCLOCPLC1")
-    val bplclocplc1: String? = "",
-    @JsonProperty("BPLCLOCPLC2")
-    val bplclocplc2: String? = "",
+    val address1: String? = "",
+    val address2: String? = "",
 )

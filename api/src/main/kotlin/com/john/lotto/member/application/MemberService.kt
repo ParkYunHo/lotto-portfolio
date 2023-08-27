@@ -4,6 +4,7 @@ import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.member.MemberRepository
 import com.john.lotto.member.adapter.`in`.web.dto.MemberInput
+import com.john.lotto.member.adapter.`in`.web.dto.MemberResult
 import com.john.lotto.member.application.port.`in`.DeleteMemberUseCase
 import com.john.lotto.member.application.port.`in`.FindMemberUseCase
 import com.john.lotto.member.application.port.`in`.RegisterUseCase
@@ -43,7 +44,7 @@ class MemberService(
         val param = MemberDto(
             userId = userId,
             email = input.email!!,
-            nickname = input.nickName!!,
+            nickname = input.nickname!!,
             updatedAt = null,
             createdAt = LocalDateTime.now()
         )
@@ -73,8 +74,8 @@ class MemberService(
         }
 
         // 닉네임 업데이트
-        if(input.nickName.isNullOrEmpty()) {
-            userInfo.nickname = input.nickName!!
+        if(input.nickname.isNullOrEmpty()) {
+            userInfo.nickname = input.nickname!!
         }
 
         val result = memberRepository.updateMember(userInfo)
@@ -103,16 +104,16 @@ class MemberService(
      * 사용자 탈퇴
      *
      * @param userId [String]
-     * @return [Mono]<[String]>
+     * @return [Mono]<[MemberResult]>
      * @author yoonho
-     * @since 2023.07.19
+     * @since 2023.08.27
      */
-    override fun delete(userId: String): Mono<String> {
+    override fun delete(userId: String): Mono<MemberResult> {
         val result = memberRepository.deleteMember(userId = userId)
         if(result <= 0) {
             throw BadRequestException("미등록된 회원입니다 - userId: $userId")
         }
 
-        return Mono.just(userId)
+        return Mono.just(MemberResult(userId = userId))
     }
 }

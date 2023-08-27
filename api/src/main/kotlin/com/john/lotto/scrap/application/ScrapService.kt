@@ -2,6 +2,7 @@ package com.john.lotto.scrap.application
 
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.scrap.StoreScrapRepository
+import com.john.lotto.scrap.adatper.`in`.web.dto.ScrapResult
 import com.john.lotto.scrap.application.port.`in`.DeleteStoreScrapUseCase
 import com.john.lotto.scrap.application.port.`in`.FindStoreScrapUseCase
 import com.john.lotto.scrap.application.port.`in`.RegisterScrapUseCase
@@ -37,7 +38,7 @@ class ScrapService(
 
         val param = StoreScrapDto(
             userId = userId,
-            rtlrid = rtlrid,
+            storeId = rtlrid,
             updatedAt = null,
             createdAt = LocalDateTime.now()
         )
@@ -63,17 +64,17 @@ class ScrapService(
      * 판매점스크랩 탈퇴
      *
      * @param userId [String]
-     * @param rtlrid [String]
-     * @return [Mono]<[String]>
+     * @param storeId [String]
+     * @return [Mono]<[ScrapResult]>
      * @author yoonho
      * @since 2023.07.23
      */
-    override fun delete(userId: String, rtlrid: String): Mono<String> {
-        val result = storeScrapRepository.deleteStoreScrap(userId = userId, rtlrid = rtlrid)
+    override fun delete(userId: String, storeId: String): Mono<ScrapResult> {
+        val result = storeScrapRepository.deleteStoreScrap(userId = userId, rtlrid = storeId)
         if(result <= 0) {
-            throw BadRequestException("미등록된 판매점스크랩입니다 - userId: $userId, rtlrid: $rtlrid")
+            throw BadRequestException("미등록된 판매점스크랩입니다 - userId: $userId, rtlrid: $storeId")
         }
 
-        return Mono.just(userId)
+        return Mono.just(ScrapResult(userId = userId, storeId = storeId))
     }
 }

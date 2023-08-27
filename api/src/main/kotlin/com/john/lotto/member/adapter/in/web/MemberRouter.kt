@@ -1,6 +1,7 @@
 package com.john.lotto.member.adapter.`in`.web
 
 import com.john.lotto.member.adapter.`in`.web.dto.MemberInput
+import com.john.lotto.member.adapter.`in`.web.dto.MemberResult
 import com.john.lotto.member.dto.MemberDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -118,7 +119,7 @@ class MemberRouter(
                         ApiResponse(
                             description = "삭제된 회원ID",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = String::class))]
+                            content = [Content(schema = Schema(implementation = MemberResult::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]

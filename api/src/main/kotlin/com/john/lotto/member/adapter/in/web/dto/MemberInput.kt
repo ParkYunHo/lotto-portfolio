@@ -13,7 +13,7 @@ data class MemberInput(
     @Schema(description = "email", example = "lotto@email.com")
     val email: String? = "",
     @Schema(description = "닉네임", example = "admin1")
-    val nickName: String? = ""
+    val nickname: String? = ""
 ): Serializable {
 
     fun validate(): MemberInput {
@@ -21,7 +21,7 @@ data class MemberInput(
             throw BadRequestException("이메일 정보가 누락되었습니다.")
         }
 
-        if(this.nickName.isNullOrEmpty()) {
+        if(this.nickname.isNullOrEmpty()) {
             throw BadRequestException("닉네임 정보가 누락되었습니다")
         }
 

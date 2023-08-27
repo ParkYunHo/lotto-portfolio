@@ -6,7 +6,6 @@ import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.number.NumberRepository
 import com.john.lotto.number.application.dto.LottoTotalInfo
 import com.john.lotto.number.application.port.`in`.FindLottoNumberUseCase
-import com.john.lotto.number.dto.LottoNumberDto
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -47,10 +46,10 @@ class NumberService(
             drwtNo6 = lottoNumber.drwtNo6,
             bnusNo = lottoNumber.bnusNo,
 
-            totSellamnt = lottoWinAmount.totSellamnt,
-            firstWinamnt = lottoWinAmount.firstWinamnt,
-            firstPrzwnerCo = lottoWinAmount.firstPrzwnerCo,
-            firstAccumamnt = lottoWinAmount.firstAccumamnt,
+            totSellAmount = lottoWinAmount.totSellamnt,
+            firstWinAmount = lottoWinAmount.firstWinamnt,
+            firstWinCount = lottoWinAmount.firstPrzwnerCo,
+            firstTotAmount = lottoWinAmount.firstAccumamnt,
         )
         log.info(" >>> [findLottoNumber] drwtNo: $drwtNo, result: $result")
         return Mono.just(result)
@@ -80,10 +79,10 @@ class NumberService(
             drwtNo6 = lottoNumber.drwtNo6,
             bnusNo = lottoNumber.bnusNo,
 
-            totSellamnt = lottoWinAmount.totSellamnt,
-            firstWinamnt = lottoWinAmount.firstWinamnt,
-            firstPrzwnerCo = lottoWinAmount.firstPrzwnerCo,
-            firstAccumamnt = lottoWinAmount.firstAccumamnt,
+            totSellAmount = lottoWinAmount.totSellamnt,
+            firstWinAmount = lottoWinAmount.firstWinamnt,
+            firstWinCount = lottoWinAmount.firstPrzwnerCo,
+            firstTotAmount = lottoWinAmount.firstAccumamnt,
         )
         log.info(" >>> [findLottoNumberLatest] result: $result")
         return Mono.just(result)

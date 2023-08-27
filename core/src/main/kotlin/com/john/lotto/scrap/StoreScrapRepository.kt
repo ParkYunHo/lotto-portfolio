@@ -42,7 +42,7 @@ class StoreScrapRepository(
             )
             .values(
                 input.userId,
-                input.rtlrid,
+                input.storeId,
                 input.updatedAt,
                 input.createdAt,
             )
