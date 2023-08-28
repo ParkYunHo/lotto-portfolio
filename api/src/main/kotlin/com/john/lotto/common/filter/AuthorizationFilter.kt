@@ -1,6 +1,7 @@
 package com.john.lotto.common.filter
 
 import com.john.lotto.auth.application.port.out.AuthPort
+import com.john.lotto.common.constants.CommCode
 import com.john.lotto.common.exception.UnAuthorizedException
 import com.john.lotto.member.MemberRepository
 import org.slf4j.LoggerFactory
@@ -42,7 +43,10 @@ class AuthorizationFilter(
         }
 
         val authorization = exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)
-            ?: throw UnAuthorizedException("Authorization 헤더가 존재하지 않습니다.")
+            ?: throw UnAuthorizedException(
+                code = CommCode.ErrorCode.NOT_AUTHORIZED_NOT_FOUND_HEADER.code,
+                msg = CommCode.ErrorCode.NOT_AUTHORIZED_NOT_FOUND_HEADER.desc,
+            )
 
         // 개발용 토큰인 경우 인증제외처리
         if(DEV_PREFIX in authorization) {
@@ -66,7 +70,12 @@ class AuthorizationFilter(
                                 // 회원정보 등록여부 체크
                                 val existsMember = memberRepository.findMember(userId = it)
                                 if(existsMember == null) {
-                                    return@flatMap Mono.error(UnAuthorizedException("등록된 회원이 아닙니다 - userId: $it"))
+                                    return@flatMap Mono.error(
+                                        UnAuthorizedException(
+                                            code = CommCode.ErrorCode.NOT_AUTHORIZED_NOT_FOUND_MEMBER.code,
+                                            msg = "${CommCode.ErrorCode.NOT_AUTHORIZED_NOT_FOUND_MEMBER.desc} - userId: $it",
+                                        )
+                                    )
                                 }
                                 return@flatMap Mono.just(it)
                             }
@@ -78,7 +87,10 @@ class AuthorizationFilter(
             }
         }
 
-        throw UnAuthorizedException("필수 인증정보가 존재하지 않습니다.")
+        throw UnAuthorizedException(
+            code = CommCode.ErrorCode.NOT_AUTHORIZED_NOT_FOUND_TOKEN.code,
+            msg = CommCode.ErrorCode.NOT_AUTHORIZED_NOT_FOUND_TOKEN.desc,
+        )
     }
 }
 

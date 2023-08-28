@@ -1,7 +1,6 @@
 package com.john.lotto.statics.adapter.`in`.web
 
-import com.john.lotto.auth.application.dto.ResultTokenInfo
-import com.john.lotto.statics.dto.StaticsDto
+import com.john.lotto.statics.application.dto.StaticsInfo
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -57,12 +56,21 @@ class StaticsRouter(
                                 ExampleObject(name = "202307", value = "202307", description = "yyyyMM")
                             ]
                         ),
+                        Parameter(
+                            name = "sortOption",
+                            description = "정렬옵션",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
+                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                            ]
+                        ),
                     ],
                     responses = [
                         ApiResponse(
                             description = "당첨번호 통계",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = StaticsDto::class))]
+                            content = [Content(schema = Schema(implementation = StaticsInfo::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]
@@ -94,12 +102,21 @@ class StaticsRouter(
                                 ExampleObject(name = "1070", value = "1070", description = "종료 회차")
                             ]
                         ),
+                        Parameter(
+                            name = "sortOption",
+                            description = "정렬옵션",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
+                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                            ]
+                        ),
                     ],
                     responses = [
                         ApiResponse(
                             description = "당첨번호 통계",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = StaticsDto::class))]
+                            content = [Content(schema = Schema(implementation = StaticsInfo::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]
@@ -131,12 +148,30 @@ class StaticsRouter(
                                 ExampleObject(name = "10", value = "10", description = "조회할 개수")
                             ]
                         ),
+                        Parameter(
+                            name = "isDesc",
+                            description = "랭크 내림차순 여부",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
+                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                            ]
+                        ),
+                        Parameter(
+                            name = "sortOption",
+                            description = "정렬옵션",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
+                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                            ]
+                        ),
                     ],
                     responses = [
                         ApiResponse(
                             description = "당첨번호 통계",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = StaticsDto::class))]
+                            content = [Content(schema = Schema(implementation = StaticsInfo::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]

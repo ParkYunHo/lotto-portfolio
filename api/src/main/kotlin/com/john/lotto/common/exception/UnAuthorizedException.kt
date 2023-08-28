@@ -6,5 +6,10 @@ package com.john.lotto.common.exception
  */
 class UnAuthorizedException: RuntimeException {
     constructor(msg: String?): super(msg)
+    constructor(msg: String?, code: String?): super(msg) {
+        this.code = code
+    }
     constructor(): super()
+
+    var code: String? = ""
 }

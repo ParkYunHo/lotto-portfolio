@@ -36,7 +36,14 @@ class WebFluxExceptionHandler: ErrorWebExceptionHandler {
                     exchange.response.statusCode = HttpStatus.BAD_REQUEST
                     exchange.response.headers.contentType = MediaType.APPLICATION_JSON
                     return@fromSupplier bufferFactory.wrap(
-                        objectMapper.writeValueAsBytes(BaseResponse(ex.message, HttpStatus.BAD_REQUEST, null))
+                        objectMapper.writeValueAsBytes(
+                            BaseResponse(
+                                code = "-1",
+                                message = ex.message,
+                                status = HttpStatus.BAD_REQUEST,
+                                data = null
+                            )
+                        )
                     )
                 })
             }
@@ -47,7 +54,14 @@ class WebFluxExceptionHandler: ErrorWebExceptionHandler {
                     exchange.response.statusCode = HttpStatus.BAD_REQUEST
                     exchange.response.headers.contentType = MediaType.APPLICATION_JSON
                     return@fromSupplier bufferFactory.wrap(
-                        objectMapper.writeValueAsBytes(BaseResponse(ex.message, HttpStatus.BAD_REQUEST, null))
+                        objectMapper.writeValueAsBytes(
+                            BaseResponse(
+                                code = "-1",
+                                message = ex.message,
+                                status = HttpStatus.BAD_REQUEST,
+                                data = null
+                            )
+                        )
                     )
                 })
             }
@@ -58,7 +72,14 @@ class WebFluxExceptionHandler: ErrorWebExceptionHandler {
                     exchange.response.statusCode = HttpStatus.UNAUTHORIZED
                     exchange.response.headers.contentType = MediaType.APPLICATION_JSON
                     return@fromSupplier bufferFactory.wrap(
-                        objectMapper.writeValueAsBytes(BaseResponse(ex.message, HttpStatus.UNAUTHORIZED, null))
+                        objectMapper.writeValueAsBytes(
+                            BaseResponse(
+                                code = ex.code,
+                                message = ex.message,
+                                status = HttpStatus.UNAUTHORIZED,
+                                data = null
+                            )
+                        )
                     )
                 })
             }
@@ -69,7 +90,14 @@ class WebFluxExceptionHandler: ErrorWebExceptionHandler {
                     exchange.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
                     exchange.response.headers.contentType = MediaType.APPLICATION_JSON
                     return@fromSupplier bufferFactory.wrap(
-                        objectMapper.writeValueAsBytes(BaseResponse(ex.message, HttpStatus.INTERNAL_SERVER_ERROR, null))
+                        objectMapper.writeValueAsBytes(
+                            BaseResponse(
+                                code = "-1",
+                                message = ex.message,
+                                status = HttpStatus.INTERNAL_SERVER_ERROR,
+                                data = null
+                            )
+                        )
                     )
                 })
             }
@@ -79,7 +107,14 @@ class WebFluxExceptionHandler: ErrorWebExceptionHandler {
                     exchange.response.statusCode = HttpStatus.BAD_REQUEST
                     exchange.response.headers.contentType = MediaType.APPLICATION_JSON
                     return@fromSupplier bufferFactory.wrap(
-                        objectMapper.writeValueAsBytes(BaseResponse(ex.message, HttpStatus.BAD_REQUEST, null))
+                        objectMapper.writeValueAsBytes(
+                            BaseResponse(
+                                code = "-1",
+                                message = ex.message,
+                                status = HttpStatus.BAD_REQUEST,
+                                data = null
+                            )
+                        )
                     )
                 })
             }

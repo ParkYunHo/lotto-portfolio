@@ -36,8 +36,31 @@ class CommCode {
         ;
     }
 
+    /**
+     * 소셜로그인 구분
+     *
+     * @author yoonho
+     * @since 2023.08.28
+     */
     enum class Social(val code: String, val desc: String) {
         KAKAO("kakao", "카카오")
+        ;
+    }
+
+    /**
+     * 인증에러코드 구분
+     *
+     * @author yoonho
+     * @since 2023.08.28
+     */
+    enum class ErrorCode(val code: String, val desc: String) {
+        NOT_AUTHORIZED_EXPIRED("100", "만료시간이 지난 토큰입니다"),
+        NOT_AUTHORIZED_ISSUER("101", "유효한 발급인증기관이 아닙니다"),
+        NOT_AUTHORIZED_AUDIENCE("102", "유효한 서비스앱키가 아닙니다"),
+        NOT_AUTHORIZED_SIGN("103", "유효한 서명이 아닙니다"),
+        NOT_AUTHORIZED_NOT_FOUND_HEADER("104", "Authorization 헤더가 존재하지 않습니다"),
+        NOT_AUTHORIZED_NOT_FOUND_MEMBER("105", "등록된 회원이 아닙니다"),
+        NOT_AUTHORIZED_NOT_FOUND_TOKEN("106", "필수 인증정보가 존재하지 않습니다"),
         ;
     }
 }

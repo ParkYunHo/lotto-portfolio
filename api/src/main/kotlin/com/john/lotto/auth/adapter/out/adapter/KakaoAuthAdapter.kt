@@ -182,17 +182,32 @@ class KakaoAuthAdapter(
 
             // 발급기관 체크
             if(claims.issuer != EnvironmentUtils.getProperty("auth.url.kauth", "")) {
-                return Mono.error(UnAuthorizedException("유효한 발급인증기관이 아닙니다 - issuer: ${claims.issuer}"))
+                return Mono.error(
+                    UnAuthorizedException(
+                        code = CommCode.ErrorCode.NOT_AUTHORIZED_ISSUER.code,
+                        msg = "${CommCode.ErrorCode.NOT_AUTHORIZED_ISSUER.desc} - issuer: ${claims.issuer}",
+                    )
+                )
             }
 
             // 서비스앱키 체크
             if(claims.audience != EnvironmentUtils.getProperty("auth.key.client-id", "")) {
-                return Mono.error(UnAuthorizedException("유효한 서비스앱키가 아닙니다 - audience: ${claims.audience}"))
+                return Mono.error(
+                    UnAuthorizedException(
+                        code = CommCode.ErrorCode.NOT_AUTHORIZED_AUDIENCE.code,
+                        msg = "${CommCode.ErrorCode.NOT_AUTHORIZED_AUDIENCE.desc} - audience: ${claims.audience}",
+                    )
+                )
             }
 
             // 만료시간 체크
             if(claims.expiration.before(Date())) {
-                return Mono.error(UnAuthorizedException("유효한 ID토큰이 아닙니다 - expiration: ${claims.expiration}"))
+                return Mono.error(
+                    UnAuthorizedException(
+                        code = CommCode.ErrorCode.NOT_AUTHORIZED_EXPIRED.code,
+                        msg = "${CommCode.ErrorCode.NOT_AUTHORIZED_EXPIRED.desc} - expiration: ${claims.expiration}",
+                    )
+                )
             }
 
             val userId = CipherUtils.encode(str = "${CommCode.Social.KAKAO.code}:${claims.subject}")
@@ -201,10 +216,20 @@ class KakaoAuthAdapter(
         } catch (uae: UnAuthorizedException) {
             return Mono.error(uae)
         } catch (ejx: ExpiredJwtException) {
-            return Mono.error(UnAuthorizedException("만료시간이 지난 토큰입니다"))
+            return Mono.error(
+                UnAuthorizedException(
+                    code = CommCode.ErrorCode.NOT_AUTHORIZED_EXPIRED.code,
+                    msg = CommCode.ErrorCode.NOT_AUTHORIZED_EXPIRED.desc,
+                )
+            )
         } catch (e: Exception) {
             log.error(" >>> [validate] Exception occurs - message: ${e.message}")
-            return Mono.error(UnAuthorizedException("유효한 서명이 아닙니다"))
+            return Mono.error(
+                UnAuthorizedException(
+                    code = CommCode.ErrorCode.NOT_AUTHORIZED_SIGN.code,
+                    msg = CommCode.ErrorCode.NOT_AUTHORIZED_SIGN.desc,
+                )
+            )
         }
     }
 
