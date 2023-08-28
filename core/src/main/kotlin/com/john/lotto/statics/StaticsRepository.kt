@@ -37,7 +37,7 @@ class StaticsRepository(
     fun findPeriodStatics(startDt: LocalDate, endDt: LocalDate): Map<String, Long> {
         val result = mutableMapOf<String, Long>()
         for(idx: Long in 1L..45L) {
-            result["no$idx"] = queryFactory
+            result["$idx"] = queryFactory
                 .select(lottoNumber.drwtNo.count())
                 .from(lottoNumber)
                 .where(
@@ -64,7 +64,7 @@ class StaticsRepository(
     fun findDrwtNoStatics(startDrwtNo: Long, endDrwtNo: Long): Map<String, Long> {
         val result = mutableMapOf<String, Long>()
         for(idx: Long in 1L..45L) {
-            result["no$idx"] = queryFactory
+            result["$idx"] = queryFactory
                 .select(lottoNumber.drwtNo.count())
                 .from(lottoNumber)
                 .where(
@@ -105,7 +105,7 @@ class StaticsRepository(
             .fetch()
 
         for(idx: Long in 1L..45L) {
-            result["no$idx"] = queryFactory
+            result["$idx"] = queryFactory
                 .select(lottoNumber.drwtNo.count())
                 .from(lottoNumber)
                 .where(
