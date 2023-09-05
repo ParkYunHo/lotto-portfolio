@@ -29,6 +29,7 @@ class StaticsHandler(
         staticsUseCase.findPeriod(
             startDtStr = request.queryParam("startDt").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
             endDtStr = request.queryParam("endDt").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
+            sortType = request.queryParam("sortType").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
             sortOption = request.queryParam("sortOption").orElseThrow { BadRequestException("필수 입력값 누락") }.trim()
         )
             .collectList()
@@ -46,6 +47,7 @@ class StaticsHandler(
         staticsUseCase.findDrwtNo(
             startDrwtNo = request.queryParam("startNo").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
             endDrwtNo = request.queryParam("endNo").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
+            sortType = request.queryParam("sortType").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
             sortOption = request.queryParam("sortOption").orElseThrow { BadRequestException("필수 입력값 누락") }.trim()
         )
             .collectList()
@@ -63,7 +65,8 @@ class StaticsHandler(
         staticsUseCase.findWinAmount(
             startRank = request.queryParam("startRank").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
             size = request.queryParam("size").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
-            isDesc = request.queryParam("isDesc").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
+            rankSortOption = request.queryParam("rankSortOption").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
+            sortType = request.queryParam("sortType").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
             sortOption = request.queryParam("sortOption").orElseThrow { BadRequestException("필수 입력값 누락") }.trim()
         )
             .collectList()

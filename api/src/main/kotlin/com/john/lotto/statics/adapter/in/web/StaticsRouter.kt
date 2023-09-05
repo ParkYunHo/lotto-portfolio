@@ -57,12 +57,21 @@ class StaticsRouter(
                             ]
                         ),
                         Parameter(
+                            name = "sortType",
+                            description = "정렬구분",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "NO", value = "NO", description = "로또번호 정렬"),
+                                ExampleObject(name = "COUNT", value = "COUNT", description = "통계카운트 정렬"),
+                            ]
+                        ),
+                        Parameter(
                             name = "sortOption",
                             description = "정렬옵션",
                             required = true,
                             examples = [
-                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
-                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                                ExampleObject(name = "DESC", value = "DESC", description = "내림차순(desc)"),
+                                ExampleObject(name = "ASC", value = "ASC", description = "오름차순(asc)"),
                             ]
                         ),
                     ],
@@ -103,12 +112,21 @@ class StaticsRouter(
                             ]
                         ),
                         Parameter(
+                            name = "sortType",
+                            description = "정렬구분",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "NO", value = "NO", description = "로또번호 정렬"),
+                                ExampleObject(name = "COUNT", value = "COUNT", description = "통계카운트 정렬"),
+                            ]
+                        ),
+                        Parameter(
                             name = "sortOption",
                             description = "정렬옵션",
                             required = true,
                             examples = [
-                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
-                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                                ExampleObject(name = "DESC", value = "DESC", description = "내림차순(desc)"),
+                                ExampleObject(name = "ASC", value = "ASC", description = "오름차순(asc)"),
                             ]
                         ),
                     ],
@@ -149,12 +167,21 @@ class StaticsRouter(
                             ]
                         ),
                         Parameter(
-                            name = "isDesc",
-                            description = "랭크 내림차순 여부",
+                            name = "rankSortOption",
+                            description = "랭크 정렬옵션",
                             required = true,
                             examples = [
-                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
-                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                                ExampleObject(name = "DESC", value = "DESC", description = "내림차순(desc)"),
+                                ExampleObject(name = "ASC", value = "ASC", description = "오름차순(asc)"),
+                            ]
+                        ),
+                        Parameter(
+                            name = "sortType",
+                            description = "정렬구분",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "NO", value = "NO", description = "로또번호 정렬"),
+                                ExampleObject(name = "COUNT", value = "COUNT", description = "통계카운트 정렬"),
                             ]
                         ),
                         Parameter(
@@ -162,8 +189,8 @@ class StaticsRouter(
                             description = "정렬옵션",
                             required = true,
                             examples = [
-                                ExampleObject(name = "desc", value = "0", description = "내림차순(desc)"),
-                                ExampleObject(name = "asc", value = "1", description = "오름차순(asc)"),
+                                ExampleObject(name = "DESC", value = "DESC", description = "내림차순(desc)"),
+                                ExampleObject(name = "ASC", value = "ASC", description = "오름차순(asc)"),
                             ]
                         ),
                     ],

@@ -74,6 +74,8 @@ class StoreService(
                     phoneNo = store.rtlrstrtelno,
                     storeName = store.firmnm,
 
+                    isGoodPlace = if(drwtInfos.size >= CommCode.goodPlaceCnt) true else false,
+
                     drwtInfos = drwtInfos,
                 )
             )

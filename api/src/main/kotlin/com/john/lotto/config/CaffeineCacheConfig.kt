@@ -68,7 +68,6 @@ class CaffeineCacheConfig {
                     .expireAfterWrite(Duration.ofMinutes(10L))      // 10분
                     .build()
             ),
-
             // 로또판매점 조회
             CaffeineCache(
                 "store.common",

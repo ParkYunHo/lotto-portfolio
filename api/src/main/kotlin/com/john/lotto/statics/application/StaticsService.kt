@@ -2,16 +2,13 @@ package com.john.lotto.statics.application
 
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
-import com.john.lotto.common.utils.ObjectMapperUtils
 import com.john.lotto.statics.StaticsRepository
 import com.john.lotto.statics.application.dto.StaticsInfo
 import com.john.lotto.statics.application.port.`in`.StaticsUseCase
-import com.john.lotto.statics.dto.StaticsDto
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -30,12 +27,14 @@ class StaticsService(
      *
      * @param startDtStr [String]
      * @param endDtStr [String]
+     * @param sortType [String]
+     * @param sortOption [String]
      * @return [Flux]<[StaticsInfo]>
      * @author yoonho
-     * @since 2023.07.12
+     * @since 2023.09.05
      */
-    @Cacheable(cacheNames = ["statics.common"], key = "#startDtStr + ':' + #endDtStr + ':' + #sortOption", unless = "#result == null")
-    override fun findPeriod(startDtStr: String, endDtStr: String, sortOption: String): Flux<StaticsInfo> {
+    @Cacheable(cacheNames = ["statics.common"], key = "#startDtStr + ':' + #endDtStr + ':' + #sortType + ':' + #sortOption", unless = "#result == null")
+    override fun findPeriod(startDtStr: String, endDtStr: String, sortType: String, sortOption: String): Flux<StaticsInfo> {
         if(startDtStr.length != 6 || endDtStr.length != 6) {
             return Flux.error(BadRequestException("날짜형식이 잘못되었습니다 - startDt: $startDtStr, endDt: $endDtStr"))
         }
@@ -52,13 +51,7 @@ class StaticsService(
             }
 
             // 결과값 정렬
-            if(sortOption == "0") {
-                staticsInfos.sortByDescending { it.count }
-            }else if(sortOption == "1") {
-                staticsInfos.sortBy { it.count }
-            }else {
-                staticsInfos.sortByDescending { it.count }
-            }
+            this.sortResult(sortType = sortType, sortOption = sortOption, staticsInfos = staticsInfos)
 
             Flux.fromIterable(staticsInfos)
         }catch (e: Exception) {
@@ -72,12 +65,14 @@ class StaticsService(
      *
      * @param startDrwtNo [String]
      * @param endDrwtNo [String]
-     * @return [Mono]<[StaticsDto]>
+     * @param sortType [String]
+     * @param sortOption [String]
+     * @return [Flux]<[StaticsInfo]>
      * @author yoonho
-     * @since 2023.07.12
+     * @since 2023.09.05
      */
-    @Cacheable(cacheNames = ["statics.common"], key = "#startDrwtNo + ':' + #endDrwtNo + ':' + #sortOption", unless = "#result == null")
-    override fun findDrwtNo(startDrwtNo: String, endDrwtNo: String, sortOption: String): Flux<StaticsInfo> =
+    @Cacheable(cacheNames = ["statics.common"], key = "#startDrwtNo + ':' + #endDrwtNo + ':' + #sortType + ':' + #sortOption", unless = "#result == null")
+    override fun findDrwtNo(startDrwtNo: String, endDrwtNo: String, sortType: String, sortOption: String): Flux<StaticsInfo> =
         try {
             val result = staticsRepository.findDrwtNoStatics(startDrwtNo = startDrwtNo.toLong(), endDrwtNo = endDrwtNo.toLong())
 
@@ -88,13 +83,7 @@ class StaticsService(
             }
 
             // 결과값 정렬
-            if(sortOption == "0") {
-                staticsInfos.sortByDescending { it.count }
-            }else if(sortOption == "1") {
-                staticsInfos.sortBy { it.count }
-            }else {
-                staticsInfos.sortByDescending { it.count }
-            }
+            this.sortResult(sortType = sortType, sortOption = sortOption, staticsInfos = staticsInfos)
 
             Flux.fromIterable(staticsInfos)
         }catch (e: Exception) {
@@ -107,18 +96,20 @@ class StaticsService(
      *
      * @param startRank [String]
      * @param size [String]
-     * @param isDesc [String]
-     * @return [Mono]<[StaticsDto]>
+     * @param rankSortOption [String]
+     * @param sortType [String]
+     * @param sortOption [String]
+     * @return [Flux]<[StaticsInfo]>
      * @author yoonho
-     * @since 2023.07.12
+     * @since 2023.09.05
      */
-    @Cacheable(cacheNames = ["statics.common"], key = "#startRank + ':' + #size + ':' + #isDesc + ':' + #sortOption", unless = "#result == null")
-    override fun findWinAmount(startRank: String, size: String, isDesc: String, sortOption: String): Flux<StaticsInfo> =
+    @Cacheable(cacheNames = ["statics.common"], key = "#startRank + ':' + #size + ':' + #rankSortOption + ':' + #sortType + ':' + #sortOption", unless = "#result == null")
+    override fun findWinAmount(startRank: String, size: String, rankSortOption: String, sortType: String, sortOption: String): Flux<StaticsInfo> =
         try {
-            val checkDesc = when(isDesc) {
-                "0" -> false
-                "1" -> true
-                else -> true
+            val checkDesc = when(rankSortOption) {
+                "DESC" -> true
+                "ASC" -> false
+                else -> false
             }
             val result = staticsRepository.findWinAmountStatics(startRank = startRank.toLong(), size = size.toLong(), isDesc = checkDesc)
 
@@ -129,17 +120,42 @@ class StaticsService(
             }
 
             // 결과값 정렬
-            if(sortOption == "0") {
-                staticsInfos.sortByDescending { it.count }
-            }else if(sortOption == "1") {
-                staticsInfos.sortBy { it.count }
-            }else {
-                staticsInfos.sortByDescending { it.count }
-            }
+            this.sortResult(sortType = sortType, sortOption = sortOption, staticsInfos = staticsInfos)
 
             Flux.fromIterable(staticsInfos)
         }catch (e: Exception) {
             log.error(" >>> [findWinAmount] Exception occurs - message: ${e.message}")
             Flux.error(InternalServerException("당첨금액별 당첨번호 조회에 실패하였습니다."))
         }
+
+    /**
+     * 통계 결과값 정렬
+     *
+     * @param sortType [String]
+     * @param sortOption [String]
+     * @param staticsInfos [MutableList]<[StaticsInfo]>
+     * @author yoonho
+     * @since 2023.09.05
+     */
+    private fun sortResult(sortType: String, sortOption: String, staticsInfos: MutableList<StaticsInfo>) {
+        if(sortOption.equals("DESC", true)) {
+            staticsInfos.sortByDescending {
+                if(sortType.equals("NO", true)) it.no
+                else if(sortType.equals("COUNT", true)) it.count
+                else it.no
+            }
+        }else if(sortOption.equals("ASC", true)) {
+            staticsInfos.sortBy {
+                if(sortType.equals("NO", true)) it.no
+                else if(sortType.equals("COUNT", true)) it.count
+                else it.no
+            }
+        }else {
+            staticsInfos.sortByDescending {
+                if(sortType.equals("NO", true)) it.no
+                else if(sortType.equals("COUNT", true)) it.count
+                else it.no
+            }
+        }
+    }
 }

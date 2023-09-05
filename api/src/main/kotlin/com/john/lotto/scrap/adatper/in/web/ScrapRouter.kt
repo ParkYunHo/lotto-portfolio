@@ -3,6 +3,7 @@ package com.john.lotto.scrap.adatper.`in`.web
 import com.john.lotto.scrap.adatper.`in`.web.dto.ScrapInput
 import com.john.lotto.scrap.adatper.`in`.web.dto.ScrapResult
 import com.john.lotto.scrap.dto.StoreScrapDto
+import com.john.lotto.store.application.dto.LottoStoreTotalInfo
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -74,7 +75,7 @@ class ScrapRouter(
                         ApiResponse(
                             description = "판매점스크랩 정보",
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = StoreScrapDto::class))]
+                            content = [Content(schema = Schema(implementation = LottoStoreTotalInfo::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]

@@ -38,6 +38,9 @@ data class LottoStoreTotalInfo(
     @Schema(description = "상호명", example = "0")
     var storeName: String? = "",
 
+    @Schema(description = "명당여부", example = "true")
+    var isGoodPlace: Boolean = false,
+
     // 1등 당첨회차
     @Schema(description = "당첨정보 리스트", example = "0", type = "array", implementation = LottoStoreTotalInfo.DrwtInfo::class)
     var drwtInfos: List<DrwtInfo> = mutableListOf()

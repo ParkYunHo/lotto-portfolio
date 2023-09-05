@@ -119,6 +119,40 @@ class StoreRepositoryImpl(
             .fetch()
 
     /**
+     * 로또 판매점 조회 (rtlrid 조회)
+     *
+     * @param storeIds [List]<[String]>
+     * @return [List]<[LottoStoreDto]>
+     * @author yoonho
+     * @since 2023.09.05
+     */
+    @Transactional(readOnly = true)
+    fun findLottoStoreByStoreId(storeIds: List<String>): List<LottoStoreDto> =
+        queryFactory
+            .select(
+                QLottoStoreDto(
+                    lottoStore.rtlrid,
+                    lottoStore.latitude,
+                    lottoStore.longitude,
+                    lottoStore.bplclocplc1,
+                    lottoStore.bplclocplc2,
+                    lottoStore.bplclocplc3,
+                    lottoStore.bplclocplc4,
+                    lottoStore.bplcdorodtladres,
+                    lottoStore.bplclocplcdtladres,
+                    lottoStore.rtlrstrtelno,
+                    lottoStore.firmnm,
+                    lottoStore.updatedAt,
+                    lottoStore.createdAt
+                )
+            )
+            .from(lottoStore)
+            .where(
+                lottoStore.rtlrid.`in`(storeIds)
+            )
+            .fetch()
+
+    /**
      * 판매점 위치정보 조회
      *
      * @return [List]<[LocationDto]>
