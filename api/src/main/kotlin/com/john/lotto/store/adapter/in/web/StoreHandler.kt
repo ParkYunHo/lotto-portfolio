@@ -3,6 +3,7 @@ package com.john.lotto.store.adapter.`in`.web
 import com.john.lotto.common.constants.CommCode
 import com.john.lotto.common.dto.BaseResponse
 import com.john.lotto.common.exception.BadRequestException
+import com.john.lotto.common.filter.userId
 import com.john.lotto.store.application.port.`in`.FindLocationUseCase
 import com.john.lotto.store.application.port.`in`.FindStoreUseCase
 import org.springframework.stereotype.Component
@@ -31,6 +32,7 @@ class StoreHandler(
      */
     fun findStore(request: ServerRequest): Mono<ServerResponse> =
         findStoreUseCase.findStore(
+            userId = request.userId(),
             location = request.queryParam("location").orElseThrow { BadRequestException("필수 입력값 누락") }.toString(),
             subLocation = request.queryParam("subLocation").orElseThrow { BadRequestException("필수 입력값 누락") }.toString(),
             sort = request.queryParam("sort").orElseGet { CommCode.Sort.NAME.code },

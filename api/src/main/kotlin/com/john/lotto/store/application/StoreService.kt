@@ -3,6 +3,7 @@ package com.john.lotto.store.application
 import com.john.lotto.amount.AmountRepository
 import com.john.lotto.common.constants.CommCode
 import com.john.lotto.drwtstore.DrwtStoreRepository
+import com.john.lotto.scrap.StoreScrapRepository
 import com.john.lotto.store.StoreRepositoryImpl
 import com.john.lotto.store.application.dto.LottoStoreTotalInfo
 import com.john.lotto.store.application.port.`in`.FindLocationUseCase
@@ -22,13 +23,15 @@ import reactor.core.publisher.Flux
 class StoreService(
     private val storeRepositoryImpl: StoreRepositoryImpl,
     private val drwtStoreRepository: DrwtStoreRepository,
-    private val amountRepository: AmountRepository
+    private val amountRepository: AmountRepository,
+    private val storeScrapRepository: StoreScrapRepository,
 ): FindStoreUseCase, FindLocationUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     /**
      * 로또 판매점 조회
      *
+     * @param userId [String]
      * @param location [String]
      * @param subLocation [String]
      * @param sort [String]
@@ -37,13 +40,15 @@ class StoreService(
      * @author yoonho
      * @since 2023.07.18
      */
-    @Cacheable(cacheNames = ["store.common"], key = "#location + ':' + #subLocation + ':' + #sort + ':' + #option", unless = "#result == null")
-    override fun findStore(location: String, subLocation: String, sort: String, option: String): Flux<LottoStoreTotalInfo> {
+    @Cacheable(cacheNames = ["store.common"], key = "#userId + ':' + #location + ':' + #subLocation + ':' + #sort + ':' + #option", unless = "#result == null")
+    override fun findStore(userId: String, location: String, subLocation: String, sort: String, option: String): Flux<LottoStoreTotalInfo> {
         val lottoStoreTotalInfoList = mutableListOf<LottoStoreTotalInfo>()
 
         val stores = storeRepositoryImpl.findLottoStore(location = location, subLocation = subLocation)
         val drwtStores = drwtStoreRepository.findLottoDrwtStore(ids = stores.map { it.rtlrid!! })
         val winAmounts = amountRepository.findLottoWinAmountList(drwtNos = drwtStores.map { it.drwtNo!! })
+        val scrapStores = storeScrapRepository.findStoreScrapList(userId = userId)
+        val scrapStoreIds = scrapStores.map { it.storeId }
 
         for(store: LottoStoreDto in stores) {
             val drwtNos = drwtStores.filter { it.rtlrid == store.rtlrid }.map { it.drwtNo!! }
@@ -75,6 +80,7 @@ class StoreService(
                     storeName = store.firmnm,
 
                     isGoodPlace = if(drwtInfos.size >= CommCode.goodPlaceCnt) true else false,
+                    isScrap = if(scrapStoreIds.contains(store.rtlrid)) true else false,
 
                     drwtInfos = drwtInfos,
                 )

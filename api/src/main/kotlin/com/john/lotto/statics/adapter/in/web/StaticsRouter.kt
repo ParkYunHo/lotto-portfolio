@@ -1,5 +1,6 @@
 package com.john.lotto.statics.adapter.`in`.web
 
+import com.john.lotto.statics.application.dto.StaticsAmountInfo
 import com.john.lotto.statics.application.dto.StaticsInfo
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -204,6 +205,44 @@ class StaticsRouter(
                     security = [SecurityRequirement(name = "OpenID Connection Authentication")]
                 )
             ),
+            RouterOperation(
+                path = "/api/statics/rank/detail",
+                method = [RequestMethod.GET],
+                beanClass = StaticsHandler::class,
+                beanMethod = "findWinAmount",
+                operation = Operation(
+                    tags = ["당첨번호 통계"],
+                    summary = "당첨금액 순위별 당첨번호 정보",
+                    operationId = "findWinAmountDetail",
+                    parameters = [
+                        Parameter(
+                            name = "size",
+                            description = "조회할 개수",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "10", value = "10", description = "조회할 개수")
+                            ]
+                        ),
+                        Parameter(
+                            name = "sortOption",
+                            description = "정렬옵션",
+                            required = true,
+                            examples = [
+                                ExampleObject(name = "DESC", value = "DESC", description = "내림차순(desc)"),
+                                ExampleObject(name = "ASC", value = "ASC", description = "오름차순(asc)"),
+                            ]
+                        ),
+                    ],
+                    responses = [
+                        ApiResponse(
+                            description = "당첨번호 정보",
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = StaticsAmountInfo::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "OpenID Connection Authentication")]
+                )
+            ),
         ]
     )
     fun staticsRouterFunction(): RouterFunction<ServerResponse> = router {
@@ -211,6 +250,7 @@ class StaticsRouter(
             GET("/api/statics/period", staticsHandler::findPeriod)
             GET("/api/statics/number", staticsHandler::findDrwtNo)
             GET("/api/statics/rank", staticsHandler::findWinAmount)
+            GET("/api/statics/rank/detail", staticsHandler::findWinAmountDetail)
         }
     }
 }

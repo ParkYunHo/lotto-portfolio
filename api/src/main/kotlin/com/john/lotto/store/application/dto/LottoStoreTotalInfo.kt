@@ -40,6 +40,8 @@ data class LottoStoreTotalInfo(
 
     @Schema(description = "명당여부", example = "true")
     var isGoodPlace: Boolean = false,
+    @Schema(description = "스크랩된 판매점 여부", example = "true")
+    var isScrap: Boolean = false,
 
     // 1등 당첨회차
     @Schema(description = "당첨정보 리스트", example = "0", type = "array", implementation = LottoStoreTotalInfo.DrwtInfo::class)

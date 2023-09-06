@@ -85,6 +85,38 @@ class AmountRepository(
         else lottoWinAmount.drwtNo.`in`(drwtNos)
 
     /**
+     * 당첨금액별 당첨금액정보
+     *
+     * @param size [Long]
+     * @param isDesc [Boolean]
+     * @return [List]<[LottoWinAmountDto]>
+     * @author yoonho
+     * @since 2023.09.06
+     */
+    @Transactional(readOnly = true)
+    fun findLottoWinAmountSort(size: Long, isDesc: Boolean): List<LottoWinAmountDto> =
+        queryFactory
+            .select(
+                QLottoWinAmountDto(
+                    lottoWinAmount.drwtNo,
+                    lottoWinAmount.drwtDate,
+                    lottoWinAmount.totSellamnt,
+                    lottoWinAmount.firstWinamnt,
+                    lottoWinAmount.firstPrzwnerCo,
+                    lottoWinAmount.firstAccumamnt,
+                    lottoWinAmount.updatedAt,
+                    lottoWinAmount.createdAt
+                )
+            )
+            .from(lottoWinAmount)
+            .orderBy(
+                if(isDesc) lottoWinAmount.firstWinamnt.desc()
+                else lottoWinAmount.firstWinamnt.asc()
+            )
+            .limit(size)
+            .fetch()
+
+    /**
      * 로또 당첨금 저장
      *
      * @param input [LottoWinAmountDto]

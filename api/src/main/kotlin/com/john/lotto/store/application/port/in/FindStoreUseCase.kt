@@ -12,6 +12,7 @@ interface FindStoreUseCase {
     /**
      * 로또 판매점 조회
      *
+     * @param userId [String]
      * @param location [String]
      * @param subLocation [String]
      * @param sort [String]
@@ -20,5 +21,5 @@ interface FindStoreUseCase {
      * @author yoonho
      * @since 2023.07.18
      */
-    fun findStore(location: String, subLocation: String, sort: String, option: String): Flux<LottoStoreTotalInfo>
+    fun findStore(userId: String, location: String, subLocation: String, sort: String, option: String): Flux<LottoStoreTotalInfo>
 }

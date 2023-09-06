@@ -8,6 +8,10 @@ class CommCode {
 
     companion object {
         val goodPlaceCnt: Int = 3
+
+        val taxLimitAmount: Long = 300000000    // 당첨금 세금부과 기준금액
+        val taxOverLimit: Float = 0.33F      // 당첨금 3억 초과시 33% 세금 공제
+        val taxUnderLimit: Float = 0.22F     // 당첨금 3억 이하시 22% 세금 공제
     }
 
     /**

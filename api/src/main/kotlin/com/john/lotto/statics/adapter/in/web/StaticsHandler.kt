@@ -71,4 +71,20 @@ class StaticsHandler(
         )
             .collectList()
             .flatMap { BaseResponse().success(it) }
+
+    /**
+     * 당첨금액 순위별 당첨정보
+     *
+     * @param request [ServerRequest]
+     * @return [Mono]<[ServerResponse]>
+     * @author yoonho
+     * @since 2023.09.06
+     */
+    fun findWinAmountDetail(request: ServerRequest): Mono<ServerResponse> =
+        staticsUseCase.findWinAmountDetail(
+            size = request.queryParam("size").orElseThrow { BadRequestException("필수 입력값 누락") }.trim(),
+            sortOption = request.queryParam("sortOption").orElseThrow { BadRequestException("필수 입력값 누락") }.trim()
+        )
+            .collectList()
+            .flatMap { BaseResponse().success(it) }
 }

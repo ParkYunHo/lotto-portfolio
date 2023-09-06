@@ -1,5 +1,6 @@
 package com.john.lotto.statics.application.port.`in`
 
+import com.john.lotto.statics.application.dto.StaticsAmountInfo
 import com.john.lotto.statics.application.dto.StaticsInfo
 import com.john.lotto.statics.dto.StaticsDto
 import reactor.core.publisher.Flux
@@ -49,4 +50,16 @@ interface StaticsUseCase {
      * @since 2023.07.12
      */
     fun findWinAmount(startRank: String, size: String, rankSortOption: String, sortType: String, sortOption: String): Flux<StaticsInfo>
+
+
+    /**
+     * 당첨금액 순위별 당첨정보
+     *
+     * @param size [String]
+     * @param sortOption [String]
+     * @return [Flux]<[StaticsAmountInfo]>
+     * @author yoonho
+     * @since 2023.09.06
+     */
+    fun findWinAmountDetail(size: String, sortOption: String): Flux<StaticsAmountInfo>
 }

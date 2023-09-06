@@ -1,8 +1,12 @@
 package com.john.lotto.statics.application
 
+import com.john.lotto.amount.AmountRepository
+import com.john.lotto.amount.dto.LottoWinAmountDto
+import com.john.lotto.common.constants.CommCode
 import com.john.lotto.common.exception.BadRequestException
 import com.john.lotto.common.exception.InternalServerException
 import com.john.lotto.statics.StaticsRepository
+import com.john.lotto.statics.application.dto.StaticsAmountInfo
 import com.john.lotto.statics.application.dto.StaticsInfo
 import com.john.lotto.statics.application.port.`in`.StaticsUseCase
 import org.slf4j.LoggerFactory
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToLong
 
 /**
  * @author yoonho
@@ -18,7 +23,8 @@ import java.time.format.DateTimeFormatter
  */
 @Service
 class StaticsService(
-    private val staticsRepository: StaticsRepository
+    private val staticsRepository: StaticsRepository,
+    private val amountRepository: AmountRepository
 ): StaticsUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -126,6 +132,58 @@ class StaticsService(
         }catch (e: Exception) {
             log.error(" >>> [findWinAmount] Exception occurs - message: ${e.message}")
             Flux.error(InternalServerException("당첨금액별 당첨번호 조회에 실패하였습니다."))
+        }
+
+    /**
+     * 당첨금액 순위별 당첨정보
+     *
+     * @param size [String]
+     * @param sortOption [String]
+     * @return [Flux]<[StaticsAmountInfo]>
+     * @author yoonho
+     * @since 2023.09.06
+     */
+    @Cacheable(cacheNames = ["statics.common"], key = "#size + ':' + #sortOption", unless = "#result == null")
+    override fun findWinAmountDetail(size: String, sortOption: String): Flux<StaticsAmountInfo> =
+        try {
+            val checkDesc = when(sortOption) {
+                "DESC" -> true
+                "ASC" -> false
+                else -> false
+            }
+
+            val result = amountRepository.findLottoWinAmountSort(size = size.toLong(), isDesc = checkDesc)
+
+            val staticsDetailInfos: MutableList<StaticsAmountInfo> = mutableListOf()
+            for(item: LottoWinAmountDto in result) {
+                staticsDetailInfos.add(
+                    StaticsAmountInfo(
+                        drwtNo = item.drwtNo,
+                        firstWinAmount = item.firstWinamnt,
+                        firstWinAmountTax = this.calcTax(amount = item.firstWinamnt!!)
+                    )
+                )
+            }
+
+            Flux.fromIterable(staticsDetailInfos)
+        }catch (e: Exception) {
+            log.error(" >>> [findWinAmountDetail] Exception occurs - message: ${e.message}")
+            Flux.error(InternalServerException("당첨금액 순위별 당첨정보 조회에 실패하였습니다."))
+        }
+
+    /**
+     * 당첨금액 세금계산
+     *
+     * @param amount [Long]
+     * @return [Long]
+     * @author yoonho
+     * @since 2023.09.06
+     */
+    private fun calcTax(amount: Long): Long =
+        if(amount > CommCode.taxLimitAmount) {
+            amount * (1 - CommCode.taxOverLimit).roundToLong()
+        }else {
+            amount * (1 - CommCode.taxUnderLimit).roundToLong()
         }
 
     /**
